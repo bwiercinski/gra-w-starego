@@ -1,17 +1,30 @@
 <template>
-  <div id="app">
-    <router-view></router-view>
-  </div>
+    <div id="app" class="d-flex flex-column">
+        <navbar v-show="$route.path === '/game'"></navbar>
+        <router-view></router-view>
+    </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+    import Vue from 'vue';
+    import Component from 'vue-class-component';
+    import Navbar from './components/Navbar.vue';
 
-export default Vue.extend({
-  name: "electron-vue-typescript-starter"
-});
+    @Component({
+        name: "app",
+        components: {
+            'navbar': Navbar
+        }
+    })
+    export default class App extends Vue {
+    }
 </script>
 
-<style>
-/* CSS */
+<style lang="scss">
+    @import './assets/main.scss';
+
+    #app {
+        width: 100%;
+        height: 100%;
+    }
 </style>
