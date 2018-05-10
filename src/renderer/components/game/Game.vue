@@ -27,6 +27,8 @@
                 </b-row>
                 <b-row style="height: 20%; background: red">
                     hello
+                    {{date1.toJSON()}}
+                    {{date2.toJSON()}}
                 </b-row>
             </b-col>
         </b-row>
@@ -56,10 +58,35 @@
             });
         }
 
+        date1 = new Date();
+        date2 = new Date();
 
         onChessboardClick(i: number, j: number): void {
             [i, j] = [--i, --j];
-            console.log('chess', i, j)
+            console.log('chess', i, j);
+            console.log('chess', i + 7);
+            this.date1 =  new Date();
+            this.rec(0, 4);
+            this.date2 =  new Date();
+            console.log('done');
+
+        }
+
+        treeSize = 0;
+
+        rec(counter: number, size: number): number {
+            this.treeSize = 0;
+            let a = 0;
+            if(counter < size) {
+                for (let i = 0; i < 100; i++) {
+                    if(counter < size) {
+                        a = 1+ this.rec(counter + 1, size);
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+            return a;
         }
 
         randomAngle = () => Math.floor(Math.random() * 2) * 180 + 'deg'

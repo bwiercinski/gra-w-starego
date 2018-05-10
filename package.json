@@ -54,9 +54,12 @@
   },
   "dependencies": {
     "@types/node": "~9.4.0",
+    "@types/promise.prototype.finally": "^2.0.2",
     "@types/webpack-env": "~1.13.5",
     "bootstrap-vue": "~2.0.0-rc.1",
     "bootswatch": "^4.1.1",
+    "comedy": "^1.3.0",
+    "toobusy-js": "^0.5.1",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-property-decorator": "^6.0.0",
