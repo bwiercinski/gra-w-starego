@@ -27,8 +27,8 @@
                 </b-row>
                 <b-row style="height: 20%; background: red">
                     hello
-                    {{date1.toJSON()}}
-                    {{date2.toJSON()}}
+                    {{date1}}
+                    {{date2}}
                 </b-row>
             </b-col>
         </b-row>
@@ -41,6 +41,7 @@
     import bContainer from 'bootstrap-vue/es/components/layout/container'
     import bCol from 'bootstrap-vue/es/components/layout/col'
     import bRow from 'bootstrap-vue/es/components/layout/row'
+    import {ipcRenderer} from 'electron';
 
     @Component({
         name: "game",
@@ -58,29 +59,44 @@
             });
         }
 
-        date1 = new Date();
-        date2 = new Date();
+
+        date1 = 0;
+        date2 = 0;
 
         onChessboardClick(i: number, j: number): void {
             [i, j] = [--i, --j];
             console.log('chess', i, j);
             console.log('chess', i + 7);
-            this.date1 =  new Date();
-            this.rec(0, 4);
-            this.date2 =  new Date();
+
+            let start = +new Date();
+            console.log(this.rec(0, 4));
+            this.date1 = +new Date() - start;
+            console.log('chess1', this.date1);
+
+            start = +new Date();
+            console.log(ipcRenderer.sendSync('synchronous-message', 'ping'));
+            this.date2 = +new Date() - start;
+            console.log('chess2', this.date2);
+
+            start = +new Date();
+            ipcRenderer.removeAllListeners('asynchronous-reply');
+            ipcRenderer.on('asynchronous-reply', (event, arg) => {
+                this.date2 = +new Date() - start;
+                console.log('chess2', this.date2);
+            });
+            ipcRenderer.send('asynchronous-message', 'ping');
+
             console.log('done');
 
         }
 
-        treeSize = 0;
 
         rec(counter: number, size: number): number {
-            this.treeSize = 0;
             let a = 0;
-            if(counter < size) {
+            if (counter < size) {
                 for (let i = 0; i < 100; i++) {
-                    if(counter < size) {
-                        a = 1+ this.rec(counter + 1, size);
+                    if (counter < size) {
+                        a = 1 + this.rec(counter + 1, size);
                     } else {
                         return 0;
                     }

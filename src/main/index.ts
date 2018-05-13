@@ -1,4 +1,7 @@
 import {BrowserWindow, app} from "electron";
+import {GameDirector} from "./engine/game-director";
+
+new GameDirector().start();
 
 let mainWindow: BrowserWindow | null;
 const winURL =
@@ -11,10 +14,11 @@ function createWindow() {
      * Initial window options
      */
     mainWindow = new BrowserWindow({
+        width: 1300,
         height: 800,
-        width: 1800,
         useContentSize: true
     });
+    mainWindow.webContents.openDevTools();
 
     mainWindow.loadURL(winURL);
 
