@@ -10,9 +10,12 @@ export class MyActor {
 
     sayHello(value: boolean, message: string) {
         console.log(`${value ? 'Ping' : 'Pong'} Hello "${message}" from ${process.pid}!`);
-        let self = this;
-        setTimeout(() => self.selfActor.createChild(MyActor, {mode: 'forked'})
-            .then(childActor => childActor.sendAndReceive('sayHello', !value, `message from ${process.pid}`)), 2000);
+
+        new Promise((resolve) => setTimeout(resolve, 2000))
+            // .then(() => self.selfActor.createChild(MyActor, {mode: 'forked'}))
+            .then(() => this.selfActor.sendAndReceive('sayHello', !value, `message from ${process.pid}`))
+            // .then(() => new Promise((resolve) => setTimeout(resolve, 2500)))
+            // .then(() => this.selfActor.destroy())
     }
 }
 
@@ -26,7 +29,7 @@ export class GameDirector {
         this.rootActor = actorSystem.rootActor();// Get a root actor reference.
 
         let promise1: Promise<Actor> = this.rootActor
-            .then(rootActor => rootActor.createChild(MyActor, {mode: 'forked'}));
+            .then(rootActor => rootActor.createChild(MyActor, {mode: 'forked', clusterSize: 3}));
         promise1.then(myActor => myActor.sendAndReceive('sayHello', true, `message from ${process.pid}`));
 
         // promise2.then(reply => console.log(`Actor replied: ${reply}`))
