@@ -2,22 +2,17 @@ import {Actor, ActorSystem, createSystem} from "comedy";
 import {ipcMain} from 'electron';
 
 export class MyActor {
-    childActor: Actor;
+    selfActor: Actor;
 
-    initialize(selfActor) {
-        // Create child actor.
-        return selfActor.createChild(MyActor)
-            .then(childActor => {
-                // Save created child actor to instance field.
-                console.log('init');
-                this.childActor = childActor;
-            });
+    initialize(selfActor: Actor) {
+        this.selfActor = selfActor;
     }
 
-    sayHello(message: string) {
-        console.log(`Hello "${message}" from ${process.pid}!`);
+    sayHello(value: boolean, message: string) {
+        console.log(`${value ? 'Ping' : 'Pong'} Hello "${message}" from ${process.pid}!`);
         let self = this;
-        setTimeout(() => self.childActor.sendAndReceive('sayHello', `message from ${process.pid}`), 200);
+        setTimeout(() => self.selfActor.createChild(MyActor, {mode: 'forked'})
+            .then(childActor => childActor.sendAndReceive('sayHello', !value, `message from ${process.pid}`)), 2000);
     }
 }
 
@@ -32,7 +27,7 @@ export class GameDirector {
 
         let promise1: Promise<Actor> = this.rootActor
             .then(rootActor => rootActor.createChild(MyActor, {mode: 'forked'}));
-        promise1.then(myActor => myActor.sendAndReceive('sayHello', `message from ${process.pid}`));
+        promise1.then(myActor => myActor.sendAndReceive('sayHello', true, `message from ${process.pid}`));
 
         // promise2.then(reply => console.log(`Actor replied: ${reply}`))
         //     .catch(reason => console.log(reason))

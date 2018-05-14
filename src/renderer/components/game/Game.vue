@@ -14,8 +14,10 @@
                                 <div class="g-box" :style="{'--size': size}">
                                     <div class="g-content">
                                         <div class="g-row" v-for="i in size">
-                                            <div v-for="j in size" :class="['g-cell', (i + j) % 2 === 0 ? 'g-even' : 'g-odd']"
-                                                 :style="{'--rotate': randomAngle()}" v-on:click="onChessboardClick(i, j)">
+                                            <div v-for="j in size"
+                                                 :class="['g-cell', (i + j) % 2 === 0 ? 'g-even' : 'g-odd']"
+                                                 :style="{'--rotate': angleArray && angleArray[i] && angleArray[i][j]}"
+                                                 v-on:click="onChessboardClick(i, j)">
                                                 <span>6</span>
                                             </div>
                                         </div>
@@ -53,6 +55,7 @@
     })
     export default class Game extends Vue {
         size = 5;
+        angleArray: string[][] = this.createAngleArray(this.size);
 
         mounted() {
             this.$nextTick(() => {
@@ -105,8 +108,12 @@
             return a;
         }
 
-        randomAngle = () => Math.floor(Math.random() * 2) * 180 + 'deg'
+        createAngleArray(size): string[][] {
+            console.log('now')
+            return Array.from({length: size}, () => Array.from({length: size}, this.randomAngle));
+        };
 
+        randomAngle = () => Math.floor(Math.random() * 2) * 180 + 'deg'
     }
 </script>
 
