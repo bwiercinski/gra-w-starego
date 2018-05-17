@@ -1,7 +1,7 @@
 // import {ipcMain} from 'electron';
 import {ActorFactory} from "../actors/actor-system";
 import {ActorRef} from "js-actor";
-import ipcMain = Electron.ipcMain;
+import {ipcMain} from 'electron';
 
 
 // create a message object
@@ -32,8 +32,7 @@ export class Game {
     gameDirectorActor: ActorRef;
 
     constructor() {
-        this.actorFactory = new ActorFactory();
-        this.gameDirectorActor = this.actorFactory.createGameDirectorActor({});
+        this.gameDirectorActor = ActorFactory.createGameDirectorActor();
     }
 
     start() {

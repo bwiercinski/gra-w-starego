@@ -1,5 +1,7 @@
 import {ActorRef} from "js-actor";
 import * as _ from 'lodash';
+import {createGamePlayerByPlayerType} from "../main/players/players";
+import {ActorFactory} from "../main/actors/actor-system";
 
 export interface Position {
     row: number;
@@ -38,11 +40,30 @@ export class GameState {
     size: number;
     board: Board;
     playerPoints: number[];
+    players: ActorRef[];
     nextPlayer: number;
+
+    constructor(size: number, players: Player[]) {
+        this.size = size;
+        this.board = new Board(this.size);
+        this.playerPoints = [0, 0];
+        this.players = players.map(player => ActorFactory.createGameActor(player));
+        this.nextPlayer = 0;
+    }
 }
 
-export class GameConfig {
+export interface GameConfig {
+    size: number;
+    players: Player[];
+}
 
+export enum PlayerType {
+    HUMAN, MINMAX, MINMAX_AB, RANDOM
+}
+
+export interface Player {
+    name: string;
+    type: PlayerType;
 }
 
 export interface GamePlayer {

@@ -4,7 +4,7 @@
         <div class="cover">
             <h1>Gra w starego</h1>
             <h2>Rozwali jak młodego</h2>
-            <b-button size="lg" variant="primary" to="/game">Grajmy</b-button>
+            <b-button size="lg" variant="primary" to="/game-setup">Grajmy</b-button>
         </div>
     </div>
 </template>

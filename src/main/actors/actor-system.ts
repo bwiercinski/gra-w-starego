@@ -1,15 +1,17 @@
 import {ActorSystem, ActorRef} from "js-actor/bin";
 import {GameDirectorActor} from "./game-director.actor";
-import {GameConfig} from "../../model/model";
+import {GamePlayerActor} from "./game-player.actor";
+import {createGamePlayerByPlayerType} from "../players/players";
+import {Player} from "../../model/model";
 
 const system: ActorSystem = ActorSystem.create("GameSystem");
 
 export class ActorFactory {
-    createGameDirectorActor(gameConfig: GameConfig):ActorRef {
-        return system.actorOf(new GameDirectorActor(gameConfig));
+    public static createGameDirectorActor(): ActorRef {
+        return system.actorOf(new GameDirectorActor);
     }
 
-    // createGameActor():ActorRef {
-    //     return system.actorOf(new GameActor);
-    // }
+    public static createGameActor(player: Player): ActorRef {
+        return system.actorOf(new GamePlayerActor(player.name, createGamePlayerByPlayerType(player.type)));
+    }
 }

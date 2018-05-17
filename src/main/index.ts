@@ -1,7 +1,7 @@
 import {BrowserWindow, app} from "electron";
-// import {Game} from "./engine/game";
+import {Game} from "./engine/game";
 //
-// new Game().start();
+new Game().start();
 
 let mainWindow: BrowserWindow | null;
 const winURL =

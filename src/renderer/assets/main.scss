@@ -1,6 +1,13 @@
+
+@import '~bootstrap/dist/css/bootstrap.css';
+@import '~bootstrap-vue/dist/bootstrap-vue.css';
+
 @import "~bootswatch/dist/flatly/variables";
 @import "~bootstrap/scss/bootstrap";
 @import "~bootswatch/dist/flatly/bootswatch";
+
+$form-feedback-valid-color:         theme-color("primary") !default;
+
 
 html, body {
   width: 100%;
