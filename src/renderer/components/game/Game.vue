@@ -2,19 +2,19 @@
     <b-container id="game" fluid class="flex-lg-fill-1">
         <b-row style="height: 100%;">
             <b-col style="height: 100%;">
-                <b-row style="height: 80%;">
-                    <b-col cols="12" md="4">
+                <b-row style="height: 100%;">
+                    <b-col cols="3" style="background: red">
                         <b-row>
-                            hello
+                            <game-player-info></game-player-info>
                         </b-row>
                     </b-col>
-                    <b-col cols="12" md="8" style="height: 100%;">
+                    <b-col cols="6" style="height: 100%;">
                         <b-row style="height: 100%;">
                             <div style="margin: auto;">
-                                <div class="g-box" :style="{'--size': size}">
+                                <div class="g-box" :style="{'--size': gameConfig && gameConfig.size}">
                                     <div class="g-content">
-                                        <div class="g-row" v-for="i in size">
-                                            <div v-for="j in size"
+                                        <div class="g-row" v-for="i in gameConfig && gameConfig.size">
+                                            <div v-for="j in gameConfig && gameConfig.size"
                                                  :class="['g-cell', (i + j) % 2 === 0 ? 'g-even' : 'g-odd']"
                                                  :style="{'--rotate': angleArray && angleArray[i] && angleArray[i][j]}"
                                                  v-on:click="onChessboardClick(i, j)">
@@ -26,11 +26,11 @@
                             </div>
                         </b-row>
                     </b-col>
-                </b-row>
-                <b-row style="height: 20%; background: red">
-                    hello
-                    {{date1}}
-                    {{date2}}
+                    <b-col cols="3" style="background: red">
+                        <b-row>
+                            <game-player-info></game-player-info>
+                        </b-row>
+                    </b-col>
                 </b-row>
             </b-col>
         </b-row>
@@ -40,78 +40,52 @@
 <script lang="ts">
     import Vue from 'vue';
     import Component from 'vue-class-component';
-    import bContainer from 'bootstrap-vue/es/components/layout/container'
-    import bCol from 'bootstrap-vue/es/components/layout/col'
-    import bRow from 'bootstrap-vue/es/components/layout/row'
+    import bContainer from 'bootstrap-vue/es/components/layout/container';
+    import bCol from 'bootstrap-vue/es/components/layout/col';
+    import bRow from 'bootstrap-vue/es/components/layout/row';
+    import gamePlayerInfo from './GamePlayerInfo'
     import {ipcRenderer} from 'electron';
+    import {IpcMessage, IpcMessageType} from "../../../model/messages";
+    import {GameConfig} from "../../../model/model";
 
     @Component({
         name: "game",
         components: {
             'b-container': bContainer,
             'b-col': bCol,
-            'b-row': bRow
+            'b-row': bRow,
+            'game-player-info': gamePlayerInfo
         }
     })
     export default class Game extends Vue {
-        size = 5;
-        angleArray: string[][] = this.createAngleArray(this.size);
 
-        mounted() {
-            this.$nextTick(() => {
+        // ui
+        angleArray: string[][];
+
+        // game
+        gameConfig: GameConfig = null;
+
+        constructor() {
+            super();
+
+            ipcRenderer.removeAllListeners(IpcMessage.GAME_CONFIG + IpcMessageType.RESPONSE);
+            ipcRenderer.on(IpcMessage.GAME_CONFIG + IpcMessageType.RESPONSE, (event, gameConfig: GameConfig) => {
+                console.log('GAME_CONFIG RESPONSE' , gameConfig)
+                this.initGame(gameConfig)
             });
+            ipcRenderer.send(IpcMessage.GAME_CONFIG + IpcMessageType.REQUEST);
         }
 
-
-        date1 = 0;
-        date2 = 0;
+        initGame(gameConfig: GameConfig) {
+            this.gameConfig = gameConfig;
+            this.angleArray = this.createAngleArray(gameConfig.size);
+        }
 
         onChessboardClick(i: number, j: number): void {
             [i, j] = [--i, --j];
-            console.log('chess', i, j);
-            console.log('chess', i + 7);
-
-            let start = +new Date();
-            console.log(this.rec(0, 4));
-            this.date1 = +new Date() - start;
-            console.log('chess1', this.date1);
-
-            start = +new Date();
-            console.log(ipcRenderer.sendSync('synchronous-message', 'ping'));
-            this.date2 = +new Date() - start;
-            console.log('chess2', this.date2);
-
-            start = +new Date();
-            ipcRenderer.removeAllListeners('asynchronous-reply');
-            ipcRenderer.on('asynchronous-reply', (event, arg) => {
-                this.date2 = +new Date() - start;
-                console.log('chess2', this.date2);
-            });
-            ipcRenderer.send('asynchronous-message', 'ping');
-
-            console.log('done');
-
         }
 
-
-        rec(counter: number, size: number): number {
-            let a = 0;
-            if (counter < size) {
-                for (let i = 0; i < 100; i++) {
-                    if (counter < size) {
-                        a = 1 + this.rec(counter + 1, size);
-                    } else {
-                        return 0;
-                    }
-                }
-            }
-            return a;
-        }
-
-        createAngleArray(size): string[][] {
-            console.log('now')
-            return Array.from({length: size}, () => Array.from({length: size}, this.randomAngle));
-        };
+        createAngleArray = (size: number) => Array.from({length: size}, () => Array.from({length: size}, this.randomAngle));
 
         randomAngle = () => Math.floor(Math.random() * 2) * 180 + 'deg'
     }
@@ -124,7 +98,8 @@
 
         .g-box {
             position: relative;
-            width: 60vmin;
+            width: 45vw;
+            max-width: 80vh;
             overflow: hidden;
             background: url("~@/assets/bg-frame.png") no-repeat center;
             filter: drop-shadow(0.5vmin 0.5vmin 2.5vmin rgba(0, 0, 0, 0.5));

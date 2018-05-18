@@ -1,62 +1,69 @@
 <template>
     <b-container id="game-setup" fluid class="flex-lg-fill-1">
         <b-row>
-            <b-col cols="3" class="player-avatar old-man"></b-col>
-            <b-col>
-                <b-form @submit="onSubmit">
+            <b-col class="player-avatar old-man"></b-col>
+            <b-col class="col animated-col" :style="{'flex': '0 0 ' + middleColumnWidth + '%', 'max-width': middleColumnWidth + '%', 'padding' : '0'}">
+                <div style="width: 100%; overflow: hidden;">
+                    <div style="display: inline-block; position: relative; right: -50%;">
+                        <div style="position: relative; left: -50%;">
+                             <b-form @submit.prevent="showModal = false" @submit="onSubmit" style="width: 45vw;">
 
-                    <b-row>
-                        <h1 class="center-header">Przygotuj się!</h1>
-                    </b-row>
+                                <b-row>
+                                    <h1 class="center-header">Przygotuj się!</h1>
+                                </b-row>
 
-                    <b-row>
+                                <b-row>
 
-                        <b-col>
-                            <h2 class="center-header">Stary</h2>
-                            <b-form-group id="player1TypeGroup" label="Rodzaj gracza:" label-for="player1Type">
-                                <b-form-select id="player1Type" :options="oldmanPlayers" required
-                                               v-model="form.player1Type">
-                                </b-form-select>
-                            </b-form-group>
-                            <b-form-group id="player1NameGroup" label="Nazwa:" label-for="player1Name">
-                                <b-form-input id="player1Name" type="text" v-model="form.player1Name">
-                                </b-form-input>
-                            </b-form-group>
-                        </b-col>
+                                    <b-col>
+                                        <h3 class="center-header">Stary</h3>
+                                        <b-form-group id="player1TypeGroup" label="Rodzaj gracza" label-for="player1Type">
+                                            <b-form-select id="player1Type" :options="oldmanPlayers" required
+                                                           v-model="form.player1Type">
+                                            </b-form-select>
+                                        </b-form-group>
+                                        <b-form-group id="player1NameGroup" label="Nazwa" label-for="player1Name">
+                                            <b-form-input id="player1Name" type="text" v-model="form.player1Name">
+                                            </b-form-input>
+                                        </b-form-group>
+                                    </b-col>
 
-                        <b-col>
-                            <h2 class="center-header">Młody</h2>
-                            <b-form-group id="player2TypeGroup" label="Rodzaj gracza:" label-for="player2Type">
-                                <b-form-select id="player2Type" :options="youngmanPlayers" required
-                                               v-model="form.player2Type">
-                                </b-form-select>
-                            </b-form-group>
-                            <b-form-group id="player2NameGroup" label="Nazwa:" label-for="player2Name">
-                                <b-form-input id="player2Name" type="text" v-model="form.player2Name">
-                                </b-form-input>
-                            </b-form-group>
-                        </b-col>
+                                    <b-col>
+                                        <h3 class="center-header">Młody</h3>
+                                        <b-form-group id="player2TypeGroup" label="Rodzaj gracza" label-for="player2Type">
+                                            <b-form-select id="player2Type" :options="youngmanPlayers" required
+                                                           v-model="form.player2Type">
+                                            </b-form-select>
+                                        </b-form-group>
+                                        <b-form-group id="player2NameGroup" label="Nazwa" label-for="player2Name">
+                                            <b-form-input id="player2Name" type="text" v-model="form.player2Name">
+                                            </b-form-input>
+                                        </b-form-group>
+                                    </b-col>
 
-                    </b-row>
+                                </b-row>
 
-                    <b-row>
-                        <b-col>
-                            <b-form-group id="sizeGroup" label="Rozmiar:" label-for="size">
-                                <b-form-input id="size" type="number" v-model="form.size">
-                                </b-form-input>
-                            </b-form-group>
-                        </b-col>
-                    </b-row>
+                                <b-row>
+                                    <b-col>
+                                        <b-form-group id="sizeGroup" label="Rozmiar" label-for="size">
+                                            <b-form-input id="size" type="number" v-model="form.size">
+                                            </b-form-input>
+                                        </b-form-group>
+                                    </b-col>
+                                </b-row>
 
-                    <b-row>
-                        <b-col class="center-header">
-                            <b-button type="submit" variant="primary">Submit</b-button>
-                        </b-col>
-                    </b-row>
+                                <b-row>
+                                    <b-col class="center-header">
+                                        <b-button type="submit" variant="primary">Submit</b-button>
+                                    </b-col>
+                                </b-row>
 
-                </b-form>
+                            </b-form>
+                        </div>
+                    </div>
+                </div>
+
             </b-col>
-            <b-col cols="3" class="player-avatar young-man"></b-col>
+            <b-col class="player-avatar young-man"></b-col>
         </b-row>
     </b-container>
 </template>
@@ -75,6 +82,12 @@
     import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select';
     import bRow from 'bootstrap-vue/es/components/layout/row';
     import {GameConfig, PlayerType} from "../../../model/model";
+    import {randomArrayElement} from "../../../model/utils";
+    import {ipcRenderer} from 'electron';
+    import {IpcMessage, IpcMessageType} from "../../../model/messages";
+
+    export const oldmanSynonims = ['Stary', 'Senior', 'Starzec', 'Dziadek', 'Mędrzec', 'Przodek', 'Nestor', 'Matuzal'];
+    export const youngmanSynonims = ['Młody', 'Junior', 'Dzieciak', 'Chłopyszek', 'Małolat', 'Smarkacz'];
 
     @Component({
         name: "game-setup",
@@ -93,15 +106,16 @@
     })
     export default class GameSetup extends Vue {
         form = {
-            player1Type: null,
-            player1Name: 'Stary',
-            player2Type: null,
-            player2Name: 'Młody',
+            player1Type: -1,
+            player1Name: randomArrayElement(oldmanSynonims),
+            player2Type: -1,
+            player2Name: randomArrayElement(youngmanSynonims),
             size: 8
         };
-
         oldmanPlayers: object[];
         youngmanPlayers: object[];
+
+        middleColumnWidth = 50;
 
         constructor() {
             super();
@@ -113,10 +127,13 @@
             ];
             this.oldmanPlayers = [{text: 'Stary', value: PlayerType.HUMAN}, ...botPlayers];
             this.youngmanPlayers = [{text: 'Młody', value: PlayerType.HUMAN}, ...botPlayers];
+            this.form.player1Type = PlayerType.HUMAN;
+            this.form.player2Type = PlayerType.HUMAN;
         }
 
         onSubmit() {
-            let gameState: GameConfig = {
+            this.middleColumnWidth = 0;
+            let gameConfig: GameConfig = {
                 size: this.form.size,
                 players: [
                     {
@@ -129,9 +146,8 @@
                     }
                 ]
             };
-            console.log(gameState);
-            // setTimeout(() => this.router.push('game'), 200);
-            this.$router.push('game');
+            setTimeout(() => this.$router.push('game'), 1500);
+            ipcRenderer.send(IpcMessage.START_GAME + IpcMessageType.REQUEST, gameConfig);
         }
     }
 </script>
@@ -142,18 +158,30 @@
             height: 100vh;
 
         }
+
         .young-man {
-            background: url("~@/assets/young-man.jpg") no-repeat center center;
+            background: url("~@/assets/young-man.png") no-repeat 60% center;
             background-size: cover;
             transform: scaleX(-1);
         }
+
         .old-man {
-            background: url("~@/assets/old-man.jpg") no-repeat center center;
+            background: url("~@/assets/old-man.png") no-repeat 60% center;
             background-size: cover;
         }
+
         .center-header {
             text-align: center;
             width: 100%;
+        }
+
+        form .form-group {
+            text-align: center;
+
+        }
+
+        .col.animated-col {
+            transition: max-width 1s ease, flex 1s ease;
         }
     }
 </style>

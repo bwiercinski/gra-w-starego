@@ -1,7 +1,7 @@
 import {BrowserWindow, app} from "electron";
-import {Game} from "./engine/game";
-//
-new Game().start();
+import {MessagesFacade} from "./engine/messages-facade";
+
+new MessagesFacade().start();
 
 let mainWindow: BrowserWindow | null;
 const winURL =
