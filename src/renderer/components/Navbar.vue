@@ -8,15 +8,15 @@
 </template>
 
 <script lang="ts">
-    import Vue from "vue";
-    import Component from 'vue-class-component'
-    import {Watch} from 'vue-property-decorator'
-    import bCollapse from 'bootstrap-vue/es/components/collapse/collapse'
-    import bNavItem from 'bootstrap-vue/es/components/nav/nav-item'
-    import bNavbar from 'bootstrap-vue/es/components/navbar/navbar'
-    import bNavbarToggle from 'bootstrap-vue/es/components/navbar/navbar-toggle'
-    import bNavbarBrand from 'bootstrap-vue/es/components/navbar/navbar-brand'
-    import bNavbarNav from 'bootstrap-vue/es/components/navbar/navbar-nav'
+    import Component from 'vue-class-component';
+    import {Watch} from 'vue-property-decorator';
+    import bCollapse from 'bootstrap-vue/es/components/collapse/collapse';
+    import bNavItem from 'bootstrap-vue/es/components/nav/nav-item';
+    import bNavbar from 'bootstrap-vue/es/components/navbar/navbar';
+    import bNavbarToggle from 'bootstrap-vue/es/components/navbar/navbar-toggle';
+    import bNavbarBrand from 'bootstrap-vue/es/components/navbar/navbar-brand';
+    import bNavbarNav from 'bootstrap-vue/es/components/navbar/navbar-nav';
+    import {AbstractComponent} from "./abstract-component";
 
     export class Link {
         name: string;
@@ -43,7 +43,7 @@
             'b-navbar-nav': bNavbarNav
         }
     })
-    export default class Navbar extends Vue {
+    export default class Navbar extends AbstractComponent {
 
         $refs: {
             navbar: HTMLFormElement
@@ -54,7 +54,7 @@
             new Link('Start', '/start')
         ];
 
-        mounted () {
+        mounted() {
             this.$nextTick(() => {
                 window.addEventListener('resize', () => navbarHeight.height = this.$refs.navbar.offsetHeight);
             })

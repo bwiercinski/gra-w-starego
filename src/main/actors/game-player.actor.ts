@@ -1,6 +1,6 @@
-import {GamePlayer} from "../../model/model";
 import {AbstractGameActor} from "./abstract-game.actor";
 import {MakeMoveMessage} from "../../model/messages";
+import {GamePlayer} from "../players/players";
 
 export class GamePlayerActor extends AbstractGameActor {
 
@@ -17,7 +17,7 @@ export class GamePlayerActor extends AbstractGameActor {
     public createReceive() {
         return this.receiveBuilder()
             .match(MakeMoveMessage, (makeMoveMessage: MakeMoveMessage) =>
-                this.gamePlayer.makeMove(makeMoveMessage.gameState, makeMoveMessage.sender))
+                this.gamePlayer.makeMove(makeMoveMessage.gameState, this.getSender(), this.getSelf()))
             .build()
     }
 }

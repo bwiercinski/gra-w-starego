@@ -10,9 +10,9 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import Component from 'vue-class-component';
     import bButton from 'bootstrap-vue/es/components/button/button'
+    import {AbstractComponent} from "./abstract-component";
 
     @Component({
         name: "landing-page",
@@ -20,7 +20,7 @@
             'b-button': bButton
         }
     })
-    export default class LandingPage extends Vue {
+    export default class LandingPage extends AbstractComponent {
     }
 </script>
 

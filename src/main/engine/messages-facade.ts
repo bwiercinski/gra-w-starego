@@ -7,10 +7,11 @@ import {ActorRef} from "../../../node_modules/js-actor/bin";
 export class MessagesFacade {
 
     gameDirectorActor: ActorRef;
+    event;
 
     start() {
         this.initMessages();
-        this.gameDirectorActor = ActorFactory.createGameDirectorActor();
+        this.gameDirectorActor = ActorFactory.createGameDirectorActor(this);
     }
 
     initMessages() {
@@ -19,9 +20,14 @@ export class MessagesFacade {
             this.gameDirectorActor.tell(new StartGameMessage(gameConfig));
         });
         ipcMain.on(IpcMessage.GAME_CONFIG + IpcMessageType.REQUEST, (event) => {
+            this.event = event;
             console.log('GAME_CONFIG REQUEST');
-            this.gameDirectorActor.tell(new GameConfigMessage(event.sender));
+            this.gameDirectorActor.tell(new GameConfigMessage());
         });
+    }
+
+    gameConfigResponse(gameConfig: GameConfig) {
+        this.event.sender.send(IpcMessage.GAME_CONFIG + IpcMessageType.RESPONSE, gameConfig);
     }
 
 }

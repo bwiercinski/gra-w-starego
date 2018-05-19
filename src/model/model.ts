@@ -1,6 +1,5 @@
 import {ActorRef} from "js-actor";
 import * as _ from 'lodash';
-import {createGamePlayerByPlayerType} from "../main/players/players";
 import {ActorFactory} from "../main/actors/actor-system";
 
 export interface Position {
@@ -15,7 +14,7 @@ export class Board {
         if (obj instanceof Board) {
             this.board = _.cloneDeep(obj.board);
         } else {
-            this.board = new Array(obj).fill(new Array(obj).fill(0));
+            this.board = new Array(obj).fill(new Array(obj).fill(-1));
         }
     }
 
@@ -34,20 +33,27 @@ export class Board {
     setCellByPosition(position: Position, value: number): void {
         this.board[position.row][position.column] = value;
     }
+
+    isFree(position: Position): boolean {
+        return this.getCellByPosition(position) === -1;
+    }
 }
 
 export class GameState {
     size: number;
     board: Board;
-    playerPoints: number[];
-    players: ActorRef[];
+    players: Player[];
     nextPlayer: number;
 
     constructor(size: number, players: Player[]) {
         this.size = size;
         this.board = new Board(this.size);
-        this.playerPoints = [0, 0];
-        this.players = players.map(player => ActorFactory.createGameActor(player));
+        this.players = players.map(player => ({
+            name: player.name,
+            type: player.type,
+            playerPoints: 0,
+            actor: ActorFactory.createGameActor(player)
+        }));
         this.nextPlayer = 0;
     }
 }
@@ -62,10 +68,8 @@ export enum PlayerType {
 }
 
 export interface Player {
-    name: string;
-    type: PlayerType;
-}
-
-export interface GamePlayer {
-    makeMove(gameState: GameState, sender: ActorRef): Promise<void>
+    name?: string;
+    type?: PlayerType;
+    playerPoints?: number;
+    actor?: ActorRef;
 }

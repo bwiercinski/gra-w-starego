@@ -20,3 +20,8 @@ html, body {
   --navbar-height: 0px;
   height: calc(100vh - var(--navbar-height));
 }
+
+.center-header {
+  text-align: center;
+  width: 100%;
+}

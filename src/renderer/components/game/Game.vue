@@ -1,20 +1,21 @@
 <template>
-    <b-container id="game" fluid class="flex-lg-fill-1">
+    <b-container id="game" fluid style="flex: 1;">
         <b-row style="height: 100%;">
             <b-col style="height: 100%;">
                 <b-row style="height: 100%;">
-                    <b-col cols="3" style="background: red">
+                    <b-col cols="3">
                         <b-row>
-                            <game-player-info></game-player-info>
+                            <game-player-info :player="anyPlayer(0)"
+                                              :playerMove="ss(gameState, 'nextPlayer') === 0"></game-player-info>
                         </b-row>
                     </b-col>
                     <b-col cols="6" style="height: 100%;">
                         <b-row style="height: 100%;">
                             <div style="margin: auto;">
-                                <div class="g-box" :style="{'--size': gameConfig && gameConfig.size}">
+                                <div class="g-box" :style="{'--size': ss(gameConfig, 'size', 0)}">
                                     <div class="g-content">
-                                        <div class="g-row" v-for="i in gameConfig && gameConfig.size">
-                                            <div v-for="j in gameConfig && gameConfig.size"
+                                        <div class="g-row" v-for="i in ss(gameConfig, 'size', 0)">
+                                            <div v-for="j in ss(gameConfig, 'size', 0)"
                                                  :class="['g-cell', (i + j) % 2 === 0 ? 'g-even' : 'g-odd']"
                                                  :style="{'--rotate': angleArray && angleArray[i] && angleArray[i][j]}"
                                                  v-on:click="onChessboardClick(i, j)">
@@ -26,9 +27,10 @@
                             </div>
                         </b-row>
                     </b-col>
-                    <b-col cols="3" style="background: red">
+                    <b-col cols="3">
                         <b-row>
-                            <game-player-info></game-player-info>
+                            <game-player-info :player="anyPlayer(1)"
+                                              :playerMove="ss(gameState, 'nextPlayer') === 1"></game-player-info>
                         </b-row>
                     </b-col>
                 </b-row>
@@ -46,7 +48,8 @@
     import gamePlayerInfo from './GamePlayerInfo'
     import {ipcRenderer} from 'electron';
     import {IpcMessage, IpcMessageType} from "../../../model/messages";
-    import {GameConfig} from "../../../model/model";
+    import {GameConfig, GameState} from "../../../model/model";
+    import {AbstractComponent} from "../abstract-component";
 
     @Component({
         name: "game",
@@ -57,28 +60,29 @@
             'game-player-info': gamePlayerInfo
         }
     })
-    export default class Game extends Vue {
+    export default class Game extends AbstractComponent {
 
         // ui
         angleArray: string[][];
 
         // game
         gameConfig: GameConfig = null;
+        gameState: GameState = null;
 
         constructor() {
             super();
 
             ipcRenderer.removeAllListeners(IpcMessage.GAME_CONFIG + IpcMessageType.RESPONSE);
             ipcRenderer.on(IpcMessage.GAME_CONFIG + IpcMessageType.RESPONSE, (event, gameConfig: GameConfig) => {
-                console.log('GAME_CONFIG RESPONSE' , gameConfig)
-                this.initGame(gameConfig)
+                console.log('GAME_CONFIG RESPONSE', gameConfig);
+                this.$nextTick(() => this.initGame(gameConfig))
             });
             ipcRenderer.send(IpcMessage.GAME_CONFIG + IpcMessageType.REQUEST);
         }
 
         initGame(gameConfig: GameConfig) {
             this.gameConfig = gameConfig;
-            this.angleArray = this.createAngleArray(gameConfig.size);
+            this.angleArray = this.createAngleArray(this.ss(gameConfig, 'size', 0));
         }
 
         onChessboardClick(i: number, j: number): void {
@@ -87,7 +91,12 @@
 
         createAngleArray = (size: number) => Array.from({length: size}, () => Array.from({length: size}, this.randomAngle));
 
-        randomAngle = () => Math.floor(Math.random() * 2) * 180 + 'deg'
+        randomAngle = () => Math.floor(Math.random() * 2) * 180 + 'deg';
+
+        anyPlayer(index: number) {
+            let players = this.ss(this.gameState, 'players') || this.ss(this.gameConfig, 'players');
+            return this.ss(players, index.toString(), null);
+        }
     }
 </script>
 
@@ -160,7 +169,7 @@
         }
     }
 
-    @media (min-width: 768px) {
+    /*@media (min-width: 768px) {
         .flex-lg-fill-1 {
             flex: 1;
         }
@@ -170,5 +179,5 @@
         .g-box {
             margin-bottom: 50px;
         }
-    }
+    }*/
 </style>

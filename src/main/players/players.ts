@@ -1,42 +1,74 @@
-import {GamePlayer, GameState, PlayerType} from "../../model/model";
+import {GameState, Player, PlayerType} from "../../model/model";
 import {ActorRef} from "js-actor";
 
-export function createGamePlayerByPlayerType(playerType: PlayerType) {
-    switch (playerType) {
+export function createGamePlayerByPlayerType(player: Player) {
+    switch (player.type) {
         case PlayerType.HUMAN:
-            return new HumanGamePlayer();
+            return new HumanGamePlayer(player);
         case PlayerType.MINMAX:
-            return new MinmaxGamePlayer();
+            return new MinmaxGamePlayer(player);
         case PlayerType.MINMAX_AB:
-            return new MinmaxAlphaBetaGamePlayer();
+            return new MinmaxAlphaBetaGamePlayer(player);
         case PlayerType.RANDOM:
-            return new RandomGamePlayer();
-        default:
-            return null;
+            return new RandomGamePlayer(player);
     }
-
 }
 
-export class HumanGamePlayer implements GamePlayer {
-    makeMove(gameState: GameState, sender: ActorRef): Promise<void> {
+export abstract class GamePlayer {
+
+    player: Player;
+
+    protected constructor(player: Player) {
+        this.player = player;
+    }
+
+    abstract makeMove(gameState: GameState, sender: ActorRef, player: ActorRef): Promise<void>
+}
+
+export class HumanGamePlayer extends GamePlayer {
+
+    constructor(player: Player) {
+        super(player);
+    }
+
+    makeMove(gameState: GameState, sender: ActorRef, player: ActorRef): Promise<void> {
+        console.log('HumanGamePlayer', gameState);
         return undefined;
     }
 }
 
-export class MinmaxGamePlayer implements GamePlayer {
-    makeMove(gameState: GameState, sender: ActorRef): Promise<void> {
+export class MinmaxGamePlayer extends GamePlayer {
+
+    constructor(player: Player) {
+        super(player);
+    }
+
+    makeMove(gameState: GameState, sender: ActorRef, player: ActorRef): Promise<void> {
+        console.log('MinmaxGamePlayer', gameState);
         return undefined;
     }
 }
 
-export class MinmaxAlphaBetaGamePlayer implements GamePlayer {
-    makeMove(gameState: GameState, sender: ActorRef): Promise<void> {
+export class MinmaxAlphaBetaGamePlayer extends GamePlayer {
+
+    constructor(player: Player) {
+        super(player);
+    }
+
+    makeMove(gameState: GameState, sender: ActorRef, player: ActorRef): Promise<void> {
+        console.log('MinmaxAlphaBetaGamePlayer', gameState);
         return undefined;
     }
 }
 
-export class RandomGamePlayer implements GamePlayer {
-    makeMove(gameState: GameState, sender: ActorRef): Promise<void> {
+export class RandomGamePlayer extends GamePlayer {
+
+    constructor(player: Player) {
+        super(player);
+    }
+
+    makeMove(gameState: GameState, sender: ActorRef, player: ActorRef): Promise<void> {
+        console.log('RandomGamePlayer', gameState);
         return undefined;
     }
 }

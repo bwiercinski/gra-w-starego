@@ -9,6 +9,7 @@
     import Vue from 'vue';
     import Component from 'vue-class-component';
     import Navbar from './components/Navbar.vue';
+    import {AbstractComponent} from "./components/abstract-component";
 
     @Component({
         name: "app",
@@ -16,7 +17,7 @@
             'navbar': Navbar
         }
     })
-    export default class App extends Vue {
+    export default class App extends AbstractComponent {
     }
 </script>
 
