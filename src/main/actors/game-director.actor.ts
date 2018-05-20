@@ -1,20 +1,19 @@
-import {GameConfig, GameState} from "../../model/model";
+import {GameConfig, GameState, Position} from "../../model/model";
 import {AbstractGameActor} from "./abstract-game.actor";
 import {
-    GameConfigMessage,
-    IpcMessage,
-    IpcMessageType,
-    MakeMoveMessage, Message,
+    GameStateMessage,
+    MakeMoveMessage,
     MoveMadeMessage,
-    StartGameMessage
+    StartGameMessage,
+    StopGameMessage
 } from "../../model/messages";
 import {MessagesFacade} from "../engine/messages-facade";
+import {ActorFactory} from "./actor-system";
 
 export class GameDirectorActor extends AbstractGameActor {
 
     messagesFacade: MessagesFacade;
 
-    gameConfig: GameConfig;
     gameState: GameState;
 
     constructor(messagesFacade: MessagesFacade) {
@@ -25,26 +24,62 @@ export class GameDirectorActor extends AbstractGameActor {
     public createReceive() {
         return this.receiveBuilder()
             .match(StartGameMessage, this.messageDecorator(this.startGameMessage))
-            .match(GameConfigMessage, this.messageDecorator(this.gameConfigMessage))
+            .match(StopGameMessage, this.messageDecorator(this.stopGameMessage))
+            .match(GameStateMessage, this.messageDecorator(this.gameStateMessage))
             .match(MoveMadeMessage, this.messageDecorator(this.moveMadeMessage))
             .build()
     }
 
-    startGameMessage(startGameMessage: StartGameMessage, self: GameDirectorActor): void {
-        self.gameConfig = startGameMessage.gameConfig;
-        self.gameState = new GameState(self.gameConfig.size, self.gameConfig.players);
+    startGameMessage(self: GameDirectorActor, startGameMessage: StartGameMessage): void {
+        self.gameState = new GameState(
+            startGameMessage.gameConfig.size,
+            startGameMessage.gameConfig.players.map(player => ({
+                name: player.name,
+                type: player.type,
+                playerPoints: 0,
+                actor: ActorFactory.createGameActor(player, self.messagesFacade)
+            }))
+        );
+        setTimeout(() => {
+            self.nextMove(self);
+        }, 1700);
 
+    }
+
+    stopGameMessage(self: GameDirectorActor, stopGameMessage: StopGameMessage): void {
+        console.log('STOP_GAME Message', stopGameMessage);
+        self.gameState = null;
+    }
+
+    gameStateMessage(self: GameDirectorActor, gameStateMessage: GameStateMessage): void {
+        console.log('GAME_STATE Message', gameStateMessage);
+        self.messagesFacade.gameStateResponse(self.gameState);
+    }
+
+    moveMadeMessage(self: GameDirectorActor, moveMadeMessage: MoveMadeMessage): void {
+        console.log('MOVE_MADE Message', moveMadeMessage);
+        if (self.gameState && self.gameState.nextPlayer == moveMadeMessage.playerIndex) {
+            if (self.gameState.board.isFreeByPosition(moveMadeMessage.position)) {
+                self.makeMove(self, moveMadeMessage.position, self.gameState.nextPlayer);
+                self.gameState.nextPlayer = +!self.gameState.nextPlayer;
+                self.messagesFacade.gameStateResponse(self.gameState);
+                if (!self.gameState.board.isFilled()) {
+                    self.nextMove(self);
+                } else {
+                    // todo game end
+                }
+            } else {
+                // todo wrong field
+            }
+        }
+    }
+
+    nextMove(self: GameDirectorActor) {
         self.gameState.players[self.gameState.nextPlayer].actor
             .tell(new MakeMoveMessage(self.gameState), self.getSelf());
     }
 
-    gameConfigMessage(gameConfigMessage: GameConfigMessage, self: GameDirectorActor): void {
-        console.log('GAME_CONFIG RESPONSE', gameConfigMessage);
-        self.messagesFacade.gameConfigResponse(self.gameConfig);
-    }
-
-    moveMadeMessage(moveMadeMessage: MoveMadeMessage, self: GameDirectorActor): void {
-        console.log('MOVE_MADE RESPONSE', moveMadeMessage);
-        self.gameState.board.isFree(moveMadeMessage.position)
+    makeMove(self: GameDirectorActor, position: Position, playerIndex: number) {
+        self.gameState.board.setCellByPosition(position, playerIndex);
     }
 }

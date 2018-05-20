@@ -1,7 +1,7 @@
 <template>
     <b-col id="game-player-info">
-        <h3 class="center-header" style="margin: 10px 0;">{{player && player.name}}</h3>
-        <p>Player points: {{ss(playerMove, 'playerPoints', -1)}}</p>
+        <h3 class="center-header" style="margin: 10px 0;">{{ss(player, 'name', 'Bezimienny')}}</h3>
+        <p>Player points: {{ss(player, 'playerPoints', -1)}}</p>
         <p>Player move: {{playerMove}}</p>
     </b-col>
 </template>

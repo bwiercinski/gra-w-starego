@@ -1,6 +1,5 @@
 import {ActorRef} from "js-actor";
 import * as _ from 'lodash';
-import {ActorFactory} from "../main/actors/actor-system";
 
 export interface Position {
     row: number;
@@ -8,13 +7,15 @@ export interface Position {
 }
 
 export class Board {
-    private readonly board: number[][];
+    readonly board: number[][];
+    readonly size: number;
 
     constructor(obj: number | Board) {
         if (obj instanceof Board) {
             this.board = _.cloneDeep(obj.board);
         } else {
-            this.board = new Array(obj).fill(new Array(obj).fill(-1));
+            this.size = obj;
+            this.board = new Array(this.size).fill(0).map(() => new Array(this.size).fill(-1));
         }
     }
 
@@ -34,8 +35,70 @@ export class Board {
         this.board[position.row][position.column] = value;
     }
 
-    isFree(position: Position): boolean {
+    isFree(row: number, column: number): boolean {
+        return this.getCell(row, column) === -1;
+    }
+
+    isFreeByPosition(position: Position): boolean {
         return this.getCellByPosition(position) === -1;
+    }
+
+    isFilled(): boolean {
+        return !this.board.some(row => row.some(cell => cell === -1))
+    }
+
+    givingPoints(row: number, column: number): number {
+        if (!this.isFree(row, column)) return -1;
+        let points = 0;
+        if (this.board[row].filter(cell => cell === -1).length === 1) {
+            points += this.size;// row
+        }
+        if (this.board.filter(row => row[column] === -1).length === 1) {
+            points += this.size;// column
+        }
+        // increasing diagonal
+        let diff1 = 1;
+        let diff2 = 1;
+        let freeFound = false;
+        while (!freeFound && row + diff1 < this.size && column - diff1 >= 0) {
+            if (this.board[row + diff1][column - diff1] !== -1) {
+                freeFound = true;
+            }
+            diff1++;
+        }
+        while (!freeFound && row - diff2 >= 0 && column + diff2 < this.size) {
+            if (this.board[row - diff2][column + diff2] !== -1) {
+                freeFound = true;
+            }
+            diff2++;
+        }
+        if (freeFound) {
+            points += diff1 + diff2;
+        }
+        // decreasing diagonal
+        diff1 = 1;
+        diff2 = 1;
+        freeFound = false;
+        while (!freeFound && row - diff1 >= 0 && column - diff1 >= 0) {
+            if (this.board[row - diff1][column - diff1] !== -1) {
+                freeFound = true;
+            }
+            diff1++;
+        }
+        while (!freeFound && row + diff2 < this.size && column + diff2 < this.size) {
+            if (this.board[row + diff2][column + diff2] !== -1) {
+                freeFound = true;
+            }
+            diff2++;
+        }
+        if (freeFound) {
+            points += diff1 + diff2;
+        }
+        return points;
+    }
+
+    givingPointsByPosition(position: Position): number {
+        return this.givingPoints(position.row, position.column);
     }
 }
 
@@ -48,12 +111,7 @@ export class GameState {
     constructor(size: number, players: Player[]) {
         this.size = size;
         this.board = new Board(this.size);
-        this.players = players.map(player => ({
-            name: player.name,
-            type: player.type,
-            playerPoints: 0,
-            actor: ActorFactory.createGameActor(player)
-        }));
+        this.players = players;
         this.nextPlayer = 0;
     }
 }

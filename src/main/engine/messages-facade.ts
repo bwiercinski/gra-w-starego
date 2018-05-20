@@ -1,13 +1,23 @@
 import {ipcMain} from "electron";
-import {GameConfigMessage, IpcMessage, IpcMessageType, StartGameMessage} from "../../model/messages";
-import {GameConfig} from "../../model/model";
+import {
+    GameStateMessage,
+    IpcMessage,
+    IpcMessageType,
+    MoveMadeMessage,
+    PlayerTurnMessage,
+    StartGameMessage, StopGameMessage
+} from "../../model/messages";
+import {GameConfig, GameState, Position} from "../../model/model";
 import {ActorFactory} from "../actors/actor-system";
 import {ActorRef} from "../../../node_modules/js-actor/bin";
 
 export class MessagesFacade {
 
     gameDirectorActor: ActorRef;
-    event;
+    currentHumanPlayer: ActorRef;
+
+    gameStateEvent;
+    playerTurnEvent;
 
     start() {
         this.initMessages();
@@ -19,15 +29,35 @@ export class MessagesFacade {
             console.log('START_GAME REQUEST', gameConfig);
             this.gameDirectorActor.tell(new StartGameMessage(gameConfig));
         });
-        ipcMain.on(IpcMessage.GAME_CONFIG + IpcMessageType.REQUEST, (event) => {
-            this.event = event;
-            console.log('GAME_CONFIG REQUEST');
-            this.gameDirectorActor.tell(new GameConfigMessage());
+
+        ipcMain.on(IpcMessage.GAME_STATE + IpcMessageType.REQUEST, (event) => {
+            console.log('GAME_STATE REQUEST');
+            this.gameStateEvent = event;
+            this.gameDirectorActor.tell(new GameStateMessage);
+        });
+
+        ipcMain.on(IpcMessage.PLAYER_TURN + IpcMessageType.REQUEST, (event, moveMadeMessage: MoveMadeMessage) => {
+            console.log('PLAYER_TURN REQUEST', moveMadeMessage);
+            this.playerTurnEvent = event;
+            this.gameDirectorActor.tell(new MoveMadeMessage(moveMadeMessage.position, moveMadeMessage.playerIndex),
+                this.currentHumanPlayer);
+        });
+
+        ipcMain.on(IpcMessage.STOP_GAME + IpcMessageType.REQUEST, (event) => {
+            console.log('STOP_GAME REQUEST');
+            this.gameDirectorActor.tell(new StopGameMessage);
         });
     }
 
-    gameConfigResponse(gameConfig: GameConfig) {
-        this.event.sender.send(IpcMessage.GAME_CONFIG + IpcMessageType.RESPONSE, gameConfig);
+    gameStateResponse(gameState: GameState) {
+        this.gameStateEvent && this.gameStateEvent.sender
+            .send(IpcMessage.GAME_STATE + IpcMessageType.RESPONSE, gameState);
+    }
+
+    playerTurnMessage(playerTurnMessage: PlayerTurnMessage) {
+        this.currentHumanPlayer = playerTurnMessage.sender;
+        this.gameStateEvent && this.gameStateEvent.sender
+            .send(IpcMessage.PLAYER_TURN + IpcMessageType.RESPONSE, playerTurnMessage);
     }
 
 }

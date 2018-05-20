@@ -2,7 +2,7 @@
     <b-container id="game-setup" fluid class="flex-lg-fill-1">
         <b-row>
             <b-col class="player-avatar old-man"></b-col>
-            <b-col class="col animated-col"
+            <b-col class="col animated-col bg-checkers"
                    :style="{'flex': '0 0 ' + middleColumnWidth + '%',
                    'max-width': middleColumnWidth + '%',
                    'padding' : '0'}">
@@ -76,7 +76,6 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import Component from 'vue-class-component';
     import bButton from 'bootstrap-vue/es/components/button/button';
     import bContainer from 'bootstrap-vue/es/components/layout/container';
@@ -142,7 +141,7 @@
         onSubmit() {
             this.middleColumnWidth = 0;
             let gameConfig: GameConfig = {
-                size: this.form.size,
+                size: +this.form.size,
                 players: [
                     {
                         name: this.form.player0Name,
@@ -154,14 +153,21 @@
                     }
                 ]
             };
-            setTimeout(() => this.$router.push('game'), 1500);
             ipcRenderer.send(IpcMessage.START_GAME + IpcMessageType.REQUEST, gameConfig);
+            setTimeout(() => {
+                this.$router.push('game')
+            }, 1500);
         }
     }
 </script>
 
 <style lang="scss">
     #game-setup {
+        .bg-checkers {
+            background: url("~@/assets/bg-checkers.png") no-repeat center;
+            background-size: cover;
+        }
+
         .player-avatar {
             height: 100vh;
 

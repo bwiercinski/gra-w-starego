@@ -1,8 +1,8 @@
-import {ActorRef} from "js-actor";
 import {GameConfig, GameState, Position} from "./model";
+import {ActorRef} from "../../node_modules/js-actor/bin";
 
 export enum IpcMessage {
-    START_GAME, GAME_CONFIG, MOVE_MADE
+    START_GAME, GAME_STATE, PLAYER_TURN, STOP_GAME
 }
 
 export enum IpcMessageType {
@@ -18,7 +18,10 @@ export class StartGameMessage implements Message {
     }
 }
 
-export class GameConfigMessage implements Message {
+export class GameStateMessage implements Message {
+}
+
+export class StopGameMessage implements Message {
 }
 
 export class MakeMoveMessage implements Message {
@@ -27,6 +30,11 @@ export class MakeMoveMessage implements Message {
 }
 
 export class MoveMadeMessage implements Message {
-    constructor(public position: Position) {
+    constructor(public position: Position, public playerIndex: number) {
+    }
+}
+
+export class PlayerTurnMessage implements Message {
+    constructor(public playerIndex: number, public sender: ActorRef) {
     }
 }

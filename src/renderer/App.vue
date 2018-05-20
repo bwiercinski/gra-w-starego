@@ -6,7 +6,6 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
     import Component from 'vue-class-component';
     import Navbar from './components/Navbar.vue';
     import {AbstractComponent} from "./components/abstract-component";
