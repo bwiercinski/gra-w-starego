@@ -60,6 +60,7 @@ export class GameDirectorActor extends AbstractGameActor {
         console.log('MOVE_MADE Message', moveMadeMessage);
         if (self.gameState && self.gameState.nextPlayer == moveMadeMessage.playerIndex) {
             if (self.gameState.board.isFreeByPosition(moveMadeMessage.position)) {
+
                 self.makeMove(self, moveMadeMessage.position, self.gameState.nextPlayer);
                 self.gameState.nextPlayer = +!self.gameState.nextPlayer;
                 self.messagesFacade.gameStateResponse(self.gameState);
@@ -80,6 +81,8 @@ export class GameDirectorActor extends AbstractGameActor {
     }
 
     makeMove(self: GameDirectorActor, position: Position, playerIndex: number) {
-        self.gameState.board.setCellByPosition(position, playerIndex);
+        let gameState = self.gameState;
+        gameState.board.setCellByPosition(position, playerIndex);
+        gameState.players[gameState.nextPlayer].playerPoints += gameState.board.givingPointsByPosition(position)
     }
 }
