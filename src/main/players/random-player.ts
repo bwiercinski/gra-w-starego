@@ -1,6 +1,6 @@
 import {GamePlayer} from "./players";
 import {MoveMadeMessage} from "../../model/messages";
-import {ActorRef} from "../../../node_modules/js-actor/bin";
+import {ActorRef} from "js-actor";
 import {GameState, Player} from "../../model/model";
 import * as _ from 'lodash';
 
@@ -23,6 +23,6 @@ export class RandomGamePlayer extends GamePlayer {
                 row: Math.floor(randomFreeField / gameState.size),
                 column: Math.floor(randomFreeField % gameState.size)
             }, gameState.nextPlayer), player);
-        }, 1000)
+        }, 1000);
     }
 }

@@ -82,7 +82,7 @@ export class GameDirectorActor extends AbstractGameActor {
 
     makeMove(self: GameDirectorActor, position: Position, playerIndex: number) {
         let gameState = self.gameState;
-        gameState.board.setCellByPosition(position, playerIndex);
         gameState.players[gameState.nextPlayer].playerPoints += gameState.board.givingPointsByPosition(position)
+        gameState.board.setCellByPosition(position, playerIndex);
     }
 }
