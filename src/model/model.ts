@@ -10,9 +10,13 @@ export class Board {
     readonly board: number[][];
     readonly size: number;
 
-    constructor(obj: number | Board) {
-        if (obj instanceof Board) {
+    constructor(obj: number | number[][] | Board) {
+        if (obj instanceof Array) {
+            this.board = _.cloneDeep(obj);
+            this.size = this.board.length;
+        } else if (obj instanceof Board) {
             this.board = _.cloneDeep(obj.board);
+            this.size = this.board.length;
         } else {
             this.size = obj;
             this.board = new Array(this.size).fill(0).map(() => new Array(this.size).fill(-1));
@@ -32,7 +36,9 @@ export class Board {
     }
 
     setCellByPosition(position: BoardPosition, value: number): void {
-        this.board[position.row][position.column] = value;
+        if (position){
+            this.board[position.row][position.column] = value;
+        }
     }
 
     isFree(row: number, column: number): boolean {
