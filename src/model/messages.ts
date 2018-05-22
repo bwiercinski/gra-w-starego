@@ -1,4 +1,4 @@
-import {GameConfig, GameState, Position} from "./model";
+import {GameConfig, GameState, BoardPosition} from "./model";
 import {ActorRef} from "../../node_modules/js-actor/bin";
 
 export enum IpcMessage {
@@ -30,7 +30,7 @@ export class MakeMoveMessage implements Message {
 }
 
 export class MoveMadeMessage implements Message {
-    constructor(public position: Position, public playerIndex: number) {
+    constructor(public position: BoardPosition, public playerIndex: number) {
     }
 }
 

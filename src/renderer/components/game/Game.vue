@@ -38,7 +38,7 @@
     import gamePlayerInfo from './GamePlayerInfo'
     import {ipcRenderer} from 'electron';
     import {IpcMessage, IpcMessageType, MoveMadeMessage, PlayerTurnMessage} from "../../../model/messages";
-    import {GameState, Player, Position} from "../../../model/model";
+    import {GameState, Player, BoardPosition} from "../../../model/model";
     import {AbstractComponent} from "../abstract-component";
 
     @Component({
@@ -88,7 +88,7 @@
         }
 
         onChessboardClick(row: number, column: number): void {
-            let position: Position = {row: row, column: column};
+            let position: BoardPosition = {row: row, column: column};
             console.log(position, this.nextHumanPlayerIndex);
             ipcRenderer.send(IpcMessage.PLAYER_TURN + IpcMessageType.REQUEST, new MoveMadeMessage
             (position, this.nextHumanPlayerIndex));

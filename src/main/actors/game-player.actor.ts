@@ -1,7 +1,7 @@
 import {AbstractGameActor} from "./abstract-game.actor";
 import {MakeMoveMessage} from "../../model/messages";
-import {GamePlayer} from "../players/players";
 import * as _ from 'lodash';
+import {GamePlayer} from "../players/game-player";
 
 export class GamePlayerActor extends AbstractGameActor {
 
@@ -21,9 +21,10 @@ export class GamePlayerActor extends AbstractGameActor {
             .build()
     }
 
-    makeMoveMessage(self: GamePlayerActor, makeMoveMessage: MakeMoveMessage): void {
-        setTimeout(() => {
-            self.gamePlayer.makeMove(_.cloneDeep(makeMoveMessage.gameState), self.getSender(), self.getSelf())
-        }, 0);
+    async makeMoveMessage(self: GamePlayerActor, makeMoveMessage: MakeMoveMessage) {
+        await new Promise((resolve) => {
+            self.gamePlayer.makeMove(_.cloneDeep(makeMoveMessage.gameState), self.getSender(), self.getSelf());
+            resolve();
+        });
     }
 }

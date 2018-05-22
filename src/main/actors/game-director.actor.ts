@@ -1,4 +1,4 @@
-import {GameConfig, GameState, Position} from "../../model/model";
+import {GameConfig, GameState, BoardPosition} from "../../model/model";
 import {AbstractGameActor} from "./abstract-game.actor";
 import {
     GameStateMessage,
@@ -80,9 +80,9 @@ export class GameDirectorActor extends AbstractGameActor {
             .tell(new MakeMoveMessage(self.gameState), self.getSelf());
     }
 
-    makeMove(self: GameDirectorActor, position: Position, playerIndex: number) {
+    makeMove(self: GameDirectorActor, position: BoardPosition, playerIndex: number) {
         let gameState = self.gameState;
-        gameState.players[gameState.nextPlayer].playerPoints += gameState.board.givingPointsByPosition(position)
+        gameState.players[gameState.nextPlayer].playerPoints += gameState.board.givingPointsByPosition(position);
         gameState.board.setCellByPosition(position, playerIndex);
     }
 }

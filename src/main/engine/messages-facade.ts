@@ -7,7 +7,7 @@ import {
     PlayerTurnMessage,
     StartGameMessage, StopGameMessage
 } from "../../model/messages";
-import {GameConfig, GameState, Position} from "../../model/model";
+import {GameConfig, GameState, BoardPosition} from "../../model/model";
 import {ActorFactory} from "../actors/actor-system";
 import {ActorRef} from "../../../node_modules/js-actor/bin";
 

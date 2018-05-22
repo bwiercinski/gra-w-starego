@@ -1,38 +1,17 @@
-import {GameState, Player} from "../../model/model";
-import {ActorRef} from "js-actor";
+import {BoardPosition, GameState} from "../../model/model";
+import {AiPlayer} from "./ai-player";
 
-
-export abstract class GamePlayer {
-
-    player: Player;
-
-    protected constructor(player: Player) {
-        this.player = player;
-    }
-
-    abstract makeMove(gameState: GameState, sender: ActorRef, player: ActorRef): void
-}
-
-
-export class MinmaxGamePlayer extends GamePlayer {
-
-    constructor(player: Player) {
-        super(player);
-    }
-
-    makeMove(gameState: GameState, sender: ActorRef, player: ActorRef): void {
+export class MinmaxGamePlayer extends AiPlayer {
+    protected makeAiMove(gameState: GameState): Promise<BoardPosition> {
         console.log('MinmaxGamePlayer', gameState);
+        return new Promise<BoardPosition>(null);
     }
 }
 
-export class MinmaxAlphaBetaGamePlayer extends GamePlayer {
-
-    constructor(player: Player) {
-        super(player);
-    }
-
-    makeMove(gameState: GameState, sender: ActorRef, player: ActorRef): void {
+export class MinmaxAlphaBetaGamePlayer extends AiPlayer {
+    protected makeAiMove(gameState: GameState): Promise<BoardPosition> {
         console.log('MinmaxAlphaBetaGamePlayer', gameState);
+        return new Promise<BoardPosition>(null);
     }
 }
 

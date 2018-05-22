@@ -1,7 +1,7 @@
 import {ActorRef} from "js-actor";
 import * as _ from 'lodash';
 
-export interface Position {
+export interface BoardPosition {
     row: number;
     column: number;
 }
@@ -27,11 +27,11 @@ export class Board {
         this.board[row][column] = value;
     }
 
-    getCellByPosition(position: Position): number {
+    getCellByPosition(position: BoardPosition): number {
         return this.board[position.row][position.column];
     }
 
-    setCellByPosition(position: Position, value: number): void {
+    setCellByPosition(position: BoardPosition, value: number): void {
         this.board[position.row][position.column] = value;
     }
 
@@ -39,7 +39,7 @@ export class Board {
         return this.getCell(row, column) === -1;
     }
 
-    isFreeByPosition(position: Position): boolean {
+    isFreeByPosition(position: BoardPosition): boolean {
         return this.getCellByPosition(position) === -1;
     }
 
@@ -56,48 +56,51 @@ export class Board {
         if (this.board.filter(row => row[column] === -1).length === 1) {
             points += this.size;// column
         }
+
         // increasing diagonal
         let diff1 = 1;
         let diff2 = 1;
         let freeFound = false;
         while (!freeFound && row + diff1 < this.size && column - diff1 >= 0) {
-            if (this.board[row + diff1][column - diff1] !== -1) {
+            if (this.board[row + diff1][column - diff1] === -1) {
                 freeFound = true;
             }
             diff1++;
         }
         while (!freeFound && row - diff2 >= 0 && column + diff2 < this.size) {
-            if (this.board[row - diff2][column + diff2] !== -1) {
+            if (this.board[row - diff2][column + diff2] === -1) {
                 freeFound = true;
             }
             diff2++;
         }
-        if (freeFound) {
-            points += diff1 + diff2;
+        if (!freeFound) {
+            let diagonal = diff1 + diff2 - 1;
+            points += diagonal >= 2 ? diagonal : 0;
         }
         // decreasing diagonal
         diff1 = 1;
         diff2 = 1;
         freeFound = false;
         while (!freeFound && row - diff1 >= 0 && column - diff1 >= 0) {
-            if (this.board[row - diff1][column - diff1] !== -1) {
+            if (this.board[row - diff1][column - diff1] === -1) {
                 freeFound = true;
             }
             diff1++;
         }
         while (!freeFound && row + diff2 < this.size && column + diff2 < this.size) {
-            if (this.board[row + diff2][column + diff2] !== -1) {
+            if (this.board[row + diff2][column + diff2] === -1) {
                 freeFound = true;
             }
             diff2++;
         }
-        if (freeFound) {
-            points += diff1 + diff2;
+        if (!freeFound) {
+            let diagonal = diff1 + diff2 - 1;
+            points += diagonal >= 2 ? diagonal : 0;
         }
         return points;
     }
 
-    givingPointsByPosition(position: Position): number {
+    givingPointsByPosition(position: BoardPosition): number {
         return this.givingPoints(position.row, position.column);
     }
 }

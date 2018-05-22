@@ -1,15 +1,15 @@
 import {PlayerTurnMessage} from "../../model/messages";
 import {MessagesFacade} from "../engine/messages-facade";
-import {GamePlayer} from "./players";
-import {ActorRef} from "../../../node_modules/js-actor/bin";
-import {GameState, Player} from "../../model/model";
+import {ActorRef} from "js-actor";
+import {GameState} from "../../model/model";
+import {GamePlayer} from "./game-player";
 
 export class HumanGamePlayer extends GamePlayer {
 
     messagesFacade: MessagesFacade;
 
-    constructor(player: Player, messagesFacade: MessagesFacade) {
-        super(player);
+    constructor(messagesFacade: MessagesFacade) {
+        super();
         this.messagesFacade = messagesFacade;
     }
 
