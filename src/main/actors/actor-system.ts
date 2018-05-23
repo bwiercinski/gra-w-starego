@@ -1,13 +1,13 @@
 import {ActorRef, ActorSystem} from "js-actor/bin";
 import {GameDirectorActor} from "./game-director.actor";
 import {GamePlayerActor} from "./game-player.actor";
-import {MinmaxAlphaBetaGamePlayer} from "../players/players";
 import {Player, PlayerType} from "../../model/model";
 import {MessagesFacade} from "../engine/messages-facade";
 import {RandomGamePlayer} from "../players/random-player";
 import {HumanGamePlayer} from "../players/human-player";
 import {GamePlayer} from "../players/game-player";
 import {MinmaxPlayer} from "../players/minmax-player";
+import {MinmaxAbPlayer} from "../players/minmax-ab-player";
 
 const system: ActorSystem = ActorSystem.create("GameSystem");
 
@@ -25,9 +25,9 @@ export class ActorFactory {
             case PlayerType.HUMAN:
                 return new HumanGamePlayer(messagesFacade);
             case PlayerType.MINMAX:
-                return new MinmaxPlayer;
+                return new MinmaxPlayer((board, position) => board.givingPointsByPosition(position), 3);
             case PlayerType.MINMAX_AB:
-                return new MinmaxPlayer;
+                return new MinmaxAbPlayer((board, position) => board.givingPointsByPosition(position), 4);
             case PlayerType.RANDOM:
                 return new RandomGamePlayer;
         }

@@ -59,7 +59,7 @@ export class GameDirectorActor extends AbstractGameActor {
                 self.gameState.nextPlayer = +!self.gameState.nextPlayer;
                 self.messagesFacade.gameStateResponse(self.gameState);
                 if (!self.gameState.board.isFilled()) {
-                    self.nextMove(self);
+                    setTimeout(() => self.nextMove(self), 300);
                 } else {
                     // todo game end
                 }
