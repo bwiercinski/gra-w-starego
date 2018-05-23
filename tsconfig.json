@@ -6,9 +6,9 @@
       "es2015",
       "es2015.promise"
     ],
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
-    "target": "es2015",
+    "target": "esnext",
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,

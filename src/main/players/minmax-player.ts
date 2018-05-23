@@ -3,11 +3,18 @@ import {Board, BoardPosition, GameState} from "../../model/model";
 
 export class MinmaxPlayer extends AiPlayer {
     nextCellsArray: BoardPosition[];
+    board: Board;
+    choosenPosition: BoardPosition;
+    depth = 3;
 
     protected makeAiMove(gameState: GameState): Promise<BoardPosition> {
         console.log('MinmaxPlayer', gameState);
-        this.nextCellsArray = this.createNextCellsArray(gameState.size);
-        return new Promise<BoardPosition>(null);
+        return new Promise<BoardPosition>(resolve => {
+            this.nextCellsArray = this.createNextCellsArray(gameState.size);
+            this.board = gameState.board;
+            this.solveMinMax(0, this.depth - 1, true);
+            resolve(this.choosenPosition);
+        });
     }
 
     createNextCellsArray(size: number): BoardPosition[] {
@@ -19,26 +26,33 @@ export class MinmaxPlayer extends AiPlayer {
             }))
     }
 
-    solveMinMax(board: Board, position: BoardPosition, depth: number, maximizingPlayer: boolean = true): [BoardPosition, number] {
-        let bestValue: [BoardPosition, number] = [null, maximizingPlayer ? -Infinity : +Infinity];
+    solveMinMax(value: number, depth: number, maximizingPlayer: boolean = true): number {
+        let bestValue: number = maximizingPlayer ? -Infinity : +Infinity;
+
         let bestFunction = maximizingPlayer ? this.isFirstMax : this.isFirstMin;
 
-        let givingPoints: number = position != null ? board.givingPointsByPosition(position) : 0;
+        let freePositions = this.nextCellsArray.filter(position => this.board.isFreeByPosition(position));
+        for (let position of freePositions) {
 
-        if (depth == 0) {
-            return [position, givingPoints];
-        }
+            let currentPoints = (maximizingPlayer ? 1 : -1) * this.board.givingPointsByPosition(position);
 
-        board.setCellByPosition(position, 2);
-        for (let position of this.nextCellsArray.filter(position => board.isFreeByPosition(position))) {
+            this.board.setCellByPosition(position, 2);
+            let accumulatedPoints = depth > 0 && freePositions.length > 1 ?
+                this.solveMinMax(value + currentPoints, depth - 1, !maximizingPlayer) :
+                value + currentPoints;
 
-            let minMax: [BoardPosition, number] = this.solveMinMax(board, position, depth - 1, !maximizingPlayer);
-            minMax[1] += (maximizingPlayer ? 1 : -1) * givingPoints;
-            if (bestFunction(minMax[1], bestValue[1])) {
-                bestValue = minMax;
+            if (bestFunction(accumulatedPoints, bestValue)) {
+                bestValue = accumulatedPoints;
+                if (maximizingPlayer && depth == this.depth) {
+                    this.choosenPosition = position;
+                }
             }
+
+            this.board.setCellByPosition(position, -1);
         }
-        board.setCellByPosition(position, -1);
+        if (depth == this.depth - 1) {
+            console.log(this.choosenPosition, bestValue);
+        }
         return bestValue;
     }
 
@@ -65,14 +79,3 @@ export class MinmaxPlayer extends AiPlayer {
             return bestValue
     */
 }
-
-let b = new Board([
-    [0, -1, -1],
-    [-1, -1, 0],
-    [-1, 0, -1]
-]);
-
-let minmaxPlayer = new MinmaxPlayer();
-minmaxPlayer.nextCellsArray = minmaxPlayer.createNextCellsArray(3);
-let result = minmaxPlayer.solveMinMax(b, null, 2);
-console.log(result);

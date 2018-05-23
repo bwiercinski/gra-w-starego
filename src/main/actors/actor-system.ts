@@ -27,7 +27,7 @@ export class ActorFactory {
             case PlayerType.MINMAX:
                 return new MinmaxPlayer;
             case PlayerType.MINMAX_AB:
-                return new MinmaxAlphaBetaGamePlayer;
+                return new MinmaxPlayer;
             case PlayerType.RANDOM:
                 return new RandomGamePlayer;
         }

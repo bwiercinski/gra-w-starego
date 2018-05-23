@@ -1,15 +1,8 @@
 import {ipcMain} from "electron";
-import {
-    GameStateMessage,
-    IpcMessage,
-    IpcMessageType,
-    MoveMadeMessage,
-    PlayerTurnMessage,
-    StartGameMessage, StopGameMessage
-} from "../../model/messages";
-import {GameConfig, GameState, BoardPosition} from "../../model/model";
+import {GameStateMessage, IpcMessage, IpcMessageType, MoveMadeMessage, PlayerTurnMessage, StartGameMessage, StopGameMessage} from "../../model/messages";
+import {GameConfig, GameState} from "../../model/model";
 import {ActorFactory} from "../actors/actor-system";
-import {ActorRef} from "../../../node_modules/js-actor/bin";
+import {ActorRef} from "js-actor";
 
 export class MessagesFacade {
 

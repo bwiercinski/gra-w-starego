@@ -1,5 +1,5 @@
 import {GameConfig, GameState, BoardPosition} from "./model";
-import {ActorRef} from "../../node_modules/js-actor/bin";
+import {ActorRef} from "js-actor";
 
 export enum IpcMessage {
     START_GAME, GAME_STATE, PLAYER_TURN, STOP_GAME

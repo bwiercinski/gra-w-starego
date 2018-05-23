@@ -54,7 +54,7 @@ export class Board {
     }
 
     givingPoints(row: number, column: number): number {
-        if (!this.isFree(row, column)) return -1;
+        if (!this.isFree(row, column)) return null;
         let points = 0;
         if (this.board[row].filter(cell => cell === -1).length === 1) {
             points += this.size;// row

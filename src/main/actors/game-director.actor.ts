@@ -1,12 +1,6 @@
-import {GameConfig, GameState, BoardPosition} from "../../model/model";
+import {BoardPosition, GameState} from "../../model/model";
 import {AbstractGameActor} from "./abstract-game.actor";
-import {
-    GameStateMessage,
-    MakeMoveMessage,
-    MoveMadeMessage,
-    StartGameMessage,
-    StopGameMessage
-} from "../../model/messages";
+import {GameStateMessage, MakeMoveMessage, MoveMadeMessage, StartGameMessage, StopGameMessage} from "../../model/messages";
 import {MessagesFacade} from "../engine/messages-facade";
 import {ActorFactory} from "./actor-system";
 
