@@ -9,10 +9,10 @@ Vue.use(VueRouter);
 
 export default new VueRouter({
     routes: [
-        {path: '/', redirect: '/game-setup'},
+        {path: '/', redirect: '/start'},
         {path: '/game', name: 'game', component: Game},
         {path: '/game-setup', name: 'game-setup', component: GameSetup},
         {path: '/start', name: 'landing-page', component: LandingPage},
-        {path: '*', redirect: '/game'}
+        {path: '*', redirect: '/'}
     ]
 })

@@ -1,6 +1,6 @@
 <template>
     <div id="app" class="d-flex flex-column">
-        <navbar v-show="$route.path === '/game'"></navbar>
+        <navbar v-show="$route.path === false"></navbar>
         <router-view></router-view>
     </div>
 </template>

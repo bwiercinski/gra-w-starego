@@ -158,7 +158,12 @@ export interface GameConfig {
 
 export enum PlayerType {
     HUMAN, MINMAX, MINMAX_AB, RANDOM,
-    CH_
+    HEURISTICS_DIFF_LDO,
+    HEURISTICS_CORNERS_LDO,
+    HEURISTICS_CIRCLE_LDO,
+    HEURISTICS_DIFF_MF,
+    HEURISTICS_CORNERS_MF,
+    HEURISTICS_CIRCLE_MF
 }
 
 export interface Player {

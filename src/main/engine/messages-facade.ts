@@ -1,4 +1,3 @@
-import {ActorRef} from "js-actor";
 import {GameState} from "../../model/model";
 import {GameEndMessage, PlayerTurnMessage} from "../../model/messages";
 

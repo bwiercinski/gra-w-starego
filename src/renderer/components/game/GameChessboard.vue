@@ -7,7 +7,6 @@
                      :style="{'--rotate': angleArray && angleArray[i] && angleArray[i][j]}"
                      v-on:click="$emit('onChessboardClick', i - 1, j - 1)">
                     <img v-show="boardValue(i, j)" :src="boardValue(i, j)"/>
-                    <!--<span>6</span>-->
                 </div>
             </div>
         </div>
@@ -72,8 +71,8 @@
             max-width: 80vh;
             overflow: hidden;
             background: url("~@/assets/bg-frame.png") no-repeat center;
-            filter: drop-shadow(0.5vmin 0.5vmin 2.5vmin rgba(0, 0, 0, 0.5));
             background-size: cover;
+            filter: drop-shadow(0.5vmin 0.5vmin 2.5vmin rgba(0, 0, 0, 0.5));
 
             --size: 10;
 

@@ -7,12 +7,19 @@ export class Heuristics {
     }
 
     maxDifferenceRespectCorners(state: AiWeightState): number {
-        return state.board.givingPointsByPosition(state.position) * 100 +
+        return 100 * state.board.givingPointsByPosition(state.position) +
             (state.nextPlayer === state.board.size % 2 ? 1 : -1) * Heuristics.distanceFromMidPoint(state.position, state.board.size);
     }
 
-    maxDifference12(state: AiWeightState): number {
-        return state.board.givingPointsByPosition(state.position);
+    maxDifferenceRespectSecondCircle(state: AiWeightState): number {
+        let size = state.board.size;
+        let isSecondCircle =
+            (state.position.row === 1 || state.position.row === size - 2) &&
+            0 < state.position.column && state.position.column < size - 1
+            ||
+            (state.position.column === 1 || state.position.column === size - 2) &&
+            0 < state.position.row && state.position.row < size - 1;
+        return state.board.givingPointsByPosition(state.position) + (isSecondCircle ? 2 : 0);
     }
 
     leftDownOrder(state: AiOrderState): BoardPosition[] {
@@ -27,7 +34,7 @@ export class Heuristics {
                 value: Heuristics.distanceFromMidPoint(state.positions[i], state.size)
             })
         }
-        distances.sort((a,b) => a.value - b.value);
+        distances.sort((a, b) => a.value - b.value);
         let positions: BoardPosition[] = [];
         for (const value of distances) {
             positions.push(state.positions[value.index]);

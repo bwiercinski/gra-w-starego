@@ -60,7 +60,7 @@
 
                                 <b-row>
                                     <b-col class="center-header">
-                                        <b-button type="submit" variant="primary">Submit</b-button>
+                                        <b-button type="submit" variant="primary">Start!</b-button>
                                     </b-col>
                                 </b-row>
 
@@ -130,7 +130,13 @@
             let botPlayers = [
                 {text: 'Minmax', value: PlayerType.MINMAX},
                 {text: 'Minmax AlfaBeta', value: PlayerType.MINMAX_AB},
-                {text: 'Losowy', value: PlayerType.RANDOM}
+                {text: 'Losowy', value: PlayerType.RANDOM},
+                {text: 'HEURISTICS_DIFF_LDO', value: PlayerType.HEURISTICS_DIFF_LDO},
+                {text: 'HEURISTICS_CORNERS_LDO', value: PlayerType.HEURISTICS_CORNERS_LDO},
+                {text: 'HEURISTICS_CIRCLE_LDO', value: PlayerType.HEURISTICS_CIRCLE_LDO},
+                {text: 'HEURISTICS_DIFF_MF', value: PlayerType.HEURISTICS_DIFF_MF},
+                {text: 'HEURISTICS_CORNERS_MF', value: PlayerType.HEURISTICS_CORNERS_MF},
+                {text: 'HEURISTICS_CIRCLE_MF', value: PlayerType.HEURISTICS_CIRCLE_MF}
             ];
             this.oldmanPlayers = [{text: 'Stary', value: PlayerType.HUMAN}, ...botPlayers];
             this.youngmanPlayers = [{text: 'Młody', value: PlayerType.HUMAN}, ...botPlayers];

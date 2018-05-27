@@ -4,22 +4,27 @@
             <b-col style="height: 100%;">
                 <b-row style="height: 100%;">
                     <b-col cols="3">
-                        <b-row>
-                            <game-player-info :player="anyPlayer(0)"
+                        <b-row style="height: 100%;">
+                            <game-player-info :playerIndex="0" :player="anyPlayer(0)"
                                               :playerMove="ss(gameState, 'nextPlayer') === 0"></game-player-info>
                         </b-row>
                     </b-col>
                     <b-col cols="6" style="height: 100%;">
-                        <b-row style="height: 100%;">
+                        <b-row style="height: calc(100% - 75px);">
                             <div style="margin: auto;">
                                 <game-chessboard :gameState="gameState"
                                                  v-on:onChessboardClick="onChessboardClick"></game-chessboard>
                             </div>
                         </b-row>
+                        <b-row style="height: 75px; text-align: center;">
+                            <div style="margin: auto;">
+                                <b-button variant="primary" to="/start">Starczy</b-button>
+                            </div>
+                        </b-row>
                     </b-col>
                     <b-col cols="3">
-                        <b-row>
-                            <game-player-info :player="anyPlayer(1)"
+                        <b-row style="height: 100%;">
+                            <game-player-info :playerIndex="1" :player="anyPlayer(1)"
                                               :playerMove="ss(gameState, 'nextPlayer') === 1"></game-player-info>
                         </b-row>
                     </b-col>
@@ -31,6 +36,7 @@
 
 <script lang="ts">
     import Component from 'vue-class-component';
+    import bButton from 'bootstrap-vue/es/components/button/button';
     import bContainer from 'bootstrap-vue/es/components/layout/container';
     import bCol from 'bootstrap-vue/es/components/layout/col';
     import bRow from 'bootstrap-vue/es/components/layout/row';
@@ -44,6 +50,7 @@
     @Component({
         name: "game",
         components: {
+            'b-button': bButton,
             'b-container': bContainer,
             'b-col': bCol,
             'b-row': bRow,

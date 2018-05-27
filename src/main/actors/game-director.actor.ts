@@ -59,19 +59,16 @@ export class GameDirectorActor extends AbstractGameActor {
 
     moveMadeMessage(self: GameDirectorActor, moveMadeMessage: MoveMadeMessage): void {
          console.log('MOVE_MADE Message', moveMadeMessage);
-        if (self.gameState && self.gameState.nextPlayer == moveMadeMessage.playerIndex) {
-            if (self.gameState.board.isFreeByPosition(moveMadeMessage.position)) {
+        if (self.gameState && self.gameState.nextPlayer == moveMadeMessage.playerIndex &&
+            self.gameState.board.isFreeByPosition(moveMadeMessage.position)) {
 
-                self.makeMove(self, moveMadeMessage.position, self.gameState.nextPlayer);
-                self.gameState.nextPlayer = +!self.gameState.nextPlayer;
-                self.messagesFacade.gameStateResponse(self.gameState);
-                if (!self.gameState.board.isFilled()) {
-                    setTimeout(() => self.nextMove(self), 0);
-                } else {
-                    self.gameEndMessage(self);
-                }
+            self.makeMove(self, moveMadeMessage.position, self.gameState.nextPlayer);
+            self.gameState.nextPlayer = +!self.gameState.nextPlayer;
+            self.messagesFacade.gameStateResponse(self.gameState);
+            if (!self.gameState.board.isFilled()) {
+                setTimeout(() => self.nextMove(self), 100);
             } else {
-                // todo wrong field
+                self.gameEndMessage(self);
             }
         }
     }
@@ -84,7 +81,7 @@ export class GameDirectorActor extends AbstractGameActor {
     }
 
     gameEndMessage(self: GameDirectorActor) {
-        self.messagesFacade.gameEndMessage(new GameEndMessage);
+        self.messagesFacade.gameEndMessage(new GameEndMessage(self.gameState));
     }
 
     makeMove(self: GameDirectorActor, position: BoardPosition, playerIndex: number) {

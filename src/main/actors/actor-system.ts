@@ -30,7 +30,31 @@ export class ActorFactory {
             case PlayerType.MINMAX:
                 return new MinmaxPlayer(heuristics.maxDifference, 3);
             case PlayerType.MINMAX_AB:
-                return new MinmaxAbPlayer(heuristics.maxDifferenceRespectCorners, 4, heuristics.midFirst);
+                return new MinmaxAbPlayer(heuristics.maxDifference, 3, heuristics.leftDownOrder);
+            case PlayerType.HEURISTICS_DIFF_LDO:
+                return new MinmaxAbPlayer(
+                    heuristics.maxDifference, 4,
+                    heuristics.leftDownOrder);
+            case PlayerType.HEURISTICS_CORNERS_LDO:
+                return new MinmaxAbPlayer(
+                    heuristics.maxDifferenceRespectCorners, 4,
+                    heuristics.leftDownOrder);
+            case PlayerType.HEURISTICS_CIRCLE_LDO:
+                return new MinmaxAbPlayer(
+                    heuristics.maxDifferenceRespectSecondCircle, 4,
+                    heuristics.leftDownOrder);
+            case PlayerType.HEURISTICS_DIFF_MF:
+                return new MinmaxAbPlayer(
+                    heuristics.maxDifference, 4,
+                    heuristics.midFirst);
+            case PlayerType.HEURISTICS_CORNERS_MF:
+                return new MinmaxAbPlayer(
+                    heuristics.maxDifferenceRespectCorners, 4,
+                    heuristics.midFirst);
+            case PlayerType.HEURISTICS_CIRCLE_MF:
+                return new MinmaxAbPlayer(
+                    heuristics.maxDifferenceRespectSecondCircle, 4,
+                    heuristics.midFirst);
             case PlayerType.RANDOM:
                 return new RandomGamePlayer;
             default:
