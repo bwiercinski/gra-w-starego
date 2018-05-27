@@ -100,6 +100,9 @@ const players = [PlayerType.HEURISTICS_DIFF_LDO,
     PlayerType.HEURISTICS_CIRCLE_MF];
 
 const playerNames = {
+    [PlayerType.MINMAX]: "MINMAX",
+    [PlayerType.MINMAX_AB]: "MINMAX_AB",
+    [PlayerType.RANDOM]: "RANDOM",
     [PlayerType.HEURISTICS_DIFF_LDO]: "HEURISTICS_DIFF_LDO",
     [PlayerType.HEURISTICS_CORNERS_LDO]: "HEURISTICS_CORNERS_LDO",
     [PlayerType.HEURISTICS_CIRCLE_LDO]: "HEURISTICS_CIRCLE_LDO",
@@ -172,4 +175,30 @@ async function runGameSync() {
     }
 }
 
-runGameSync();
+async function testBoardPerformance() {
+
+    let games: GameConfig[] = [
+        {p0: PlayerType.HEURISTICS_DIFF_LDO, p1: PlayerType.HEURISTICS_DIFF_LDO},
+        {p0: PlayerType.HEURISTICS_DIFF_MF, p1: PlayerType.HEURISTICS_DIFF_MF}
+    ];
+
+    let consoleLog = console.log;
+    console.log = () => null;
+
+    for (const game of games) {
+        for (let i = 3; i < 17; i++) {
+            game.size = i;
+            let start = new Date();
+            let gameState = await new RunnerMessagesFacade(game).promiceStart();
+            let end = new Date();
+            consoleLog(`${playerNames[game.p0]} ${i} ${+end - +start}`)
+        }
+    }
+
+    console.log = consoleLog;
+    console.log("end");
+}
+
+// runGameSync();
+testBoardPerformance();
+
