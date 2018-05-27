@@ -16,10 +16,12 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1300,
         height: 800,
+        minHeight: 500,
+        minWidth: 600,
         useContentSize: true
     });
-    mainWindow.webContents.openDevTools();
 
+    mainWindow.setMenu(null);
     mainWindow.loadURL(winURL);
 
     mainWindow.on("closed", () => {
