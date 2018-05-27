@@ -1,8 +1,15 @@
 import {BoardPosition, GameState} from "../../model/model";
 import {AbstractGameActor} from "./abstract-game.actor";
-import {GameStateMessage, MakeMoveMessage, MoveMadeMessage, StartGameMessage, StopGameMessage} from "../../model/messages";
-import {MessagesFacade} from "../engine/messages-facade";
+import {
+    GameEndMessage,
+    GameStateMessage,
+    MakeMoveMessage,
+    MoveMadeMessage,
+    StartGameMessage,
+    StopGameMessage
+} from "../../model/messages";
 import {ActorFactory} from "./actor-system";
+import {MessagesFacade} from "../engine/messages-facade";
 
 export class GameDirectorActor extends AbstractGameActor {
 
@@ -51,7 +58,7 @@ export class GameDirectorActor extends AbstractGameActor {
     }
 
     moveMadeMessage(self: GameDirectorActor, moveMadeMessage: MoveMadeMessage): void {
-        console.log('MOVE_MADE Message', moveMadeMessage);
+         console.log('MOVE_MADE Message', moveMadeMessage);
         if (self.gameState && self.gameState.nextPlayer == moveMadeMessage.playerIndex) {
             if (self.gameState.board.isFreeByPosition(moveMadeMessage.position)) {
 
@@ -59,9 +66,9 @@ export class GameDirectorActor extends AbstractGameActor {
                 self.gameState.nextPlayer = +!self.gameState.nextPlayer;
                 self.messagesFacade.gameStateResponse(self.gameState);
                 if (!self.gameState.board.isFilled()) {
-                    setTimeout(() => self.nextMove(self), 300);
+                    setTimeout(() => self.nextMove(self), 0);
                 } else {
-                    // todo game end
+                    self.gameEndMessage(self);
                 }
             } else {
                 // todo wrong field
@@ -70,8 +77,14 @@ export class GameDirectorActor extends AbstractGameActor {
     }
 
     nextMove(self: GameDirectorActor) {
-        self.gameState.players[self.gameState.nextPlayer].actor
-            .tell(new MakeMoveMessage(self.gameState), self.getSelf());
+        if (self.gameState && self.gameState.board) {
+            self.gameState.players[self.gameState.nextPlayer].actor
+                .tell(new MakeMoveMessage(self.gameState), self.getSelf());
+        }
+    }
+
+    gameEndMessage(self: GameDirectorActor) {
+        self.messagesFacade.gameEndMessage(new GameEndMessage);
     }
 
     makeMove(self: GameDirectorActor, position: BoardPosition, playerIndex: number) {

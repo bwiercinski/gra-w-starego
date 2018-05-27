@@ -36,7 +36,7 @@ export class Board {
     }
 
     setCellByPosition(position: BoardPosition, value: number): void {
-        if (position){
+        if (position) {
             this.board[position.row][position.column] = value;
         }
     }
@@ -56,11 +56,26 @@ export class Board {
     givingPoints(row: number, column: number): number {
         if (!this.isFree(row, column)) return null;
         let points = 0;
-        if (this.board[row].filter(cell => cell === -1).length === 1) {
-            points += this.size;// row
+
+        let freeFoundCount = 0;
+        let diff = 0;
+
+        while (diff < this.size && freeFoundCount <= 1) {
+            if (this.board[row][diff] === -1) freeFoundCount++;
+            diff++;
         }
-        if (this.board.filter(row => row[column] === -1).length === 1) {
-            points += this.size;// column
+        if (freeFoundCount <= 1) {
+            points += this.size; // row
+        }
+
+        freeFoundCount = 0;
+        diff = 0;
+        while (diff < this.size && freeFoundCount <= 1) {
+            if (this.board[diff][column] === -1) freeFoundCount++;
+            diff++;
+        }
+        if (freeFoundCount <= 1) {
+            points += this.size; // column
         }
 
         // increasing diagonal
@@ -125,13 +140,25 @@ export class GameState {
     }
 }
 
+export interface AiWeightState {
+    position?: BoardPosition;
+    board?: Board;
+    nextPlayer?: number;
+}
+
+export interface AiOrderState {
+    positions?: BoardPosition[];
+    size?: number;
+}
+
 export interface GameConfig {
     size: number;
     players: Player[];
 }
 
 export enum PlayerType {
-    HUMAN, MINMAX, MINMAX_AB, RANDOM
+    HUMAN, MINMAX, MINMAX_AB, RANDOM,
+    CH_
 }
 
 export interface Player {

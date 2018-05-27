@@ -1,7 +1,7 @@
 import {BrowserWindow, app} from "electron";
-import {MessagesFacade} from "./engine/messages-facade";
+import {FrontendMessagesFacade} from "./engine/frontend-messages-facade";
 
-new MessagesFacade().start();
+new FrontendMessagesFacade().start();
 
 let mainWindow: BrowserWindow | null;
 const winURL =

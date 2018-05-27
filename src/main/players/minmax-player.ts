@@ -1,9 +1,9 @@
 import {AbstractMinmaxPlayer} from "./abstract-minmax-player";
-import {Board, BoardPosition} from "../../model/model";
+import {AiWeightState} from "../../model/model";
 
 export class MinmaxPlayer extends AbstractMinmaxPlayer {
 
-    constructor(weightOfMove: (board: Board, position: BoardPosition) => number, depth: number) {
+    constructor(weightOfMove: (state: AiWeightState) => number, depth: number) {
         super(weightOfMove, depth);
     }
 
@@ -19,7 +19,11 @@ export class MinmaxPlayer extends AbstractMinmaxPlayer {
         let freePositions = this.nextCellsArray.filter(position => this.board.isFreeByPosition(position));
         for (let position of freePositions) {
 
-            let currentPoints = (maximizingPlayer ? 1 : -1) * this.weightOfMove(this.board, position);
+            let currentPoints = (maximizingPlayer ? 1 : -1) * this.weightOfMove({
+                board: this.board,
+                position: position,
+                nextPlayer: this.nextPlayer
+            });
 
             this.board.setCellByPosition(position, 2);
             let accumulatedPoints = depth > 0 && freePositions.length > 1 ?
@@ -36,7 +40,7 @@ export class MinmaxPlayer extends AbstractMinmaxPlayer {
             this.board.setCellByPosition(position, -1);
         }
         if (depth == this.depth - 1) {
-            console.log(this.selectedPosition, bestValue);
+            // console.log(this.selectedPosition, bestValue);
         }
         return bestValue;
     }

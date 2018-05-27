@@ -24,6 +24,9 @@ export class GameStateMessage implements Message {
 export class StopGameMessage implements Message {
 }
 
+export class GameEndMessage implements Message {
+}
+
 export class MakeMoveMessage implements Message {
     constructor(public gameState: GameState) {
     }
