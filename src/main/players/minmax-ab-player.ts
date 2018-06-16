@@ -1,37 +1,39 @@
+import {IAiWeightState} from "../../model/board";
+import {IAiOrderState, IBoardPosition} from "../../model/model";
 import {AbstractMinmaxPlayer} from "./abstract-minmax-player";
-import {AiOrderState, AiWeightState, BoardPosition} from "../../model/model";
 
 export class MinmaxAbPlayer extends AbstractMinmaxPlayer {
 
-    orderPositions: (state: AiOrderState) => BoardPosition[];
+    protected orderPositions: (state: IAiOrderState) => IBoardPosition[];
 
-    constructor(weightOfMove: (state: AiWeightState) => number, depth: number, orderPositions: (state: AiOrderState) => BoardPosition[]) {
+    constructor(weightOfMove: (state: IAiWeightState) => number, depth: number,
+                orderPositions: (state: IAiOrderState) => IBoardPosition[]) {
         super(weightOfMove, depth);
         this.orderPositions = orderPositions;
     }
 
-    invokeMove(): void {
+    protected invokeMove(): void {
         this.solveMinMax(0, this.depth - 1, -Infinity, +Infinity, true);
     }
 
-    solveMinMax(value: number, depth: number, alpha: number, beta: number, maximizingPlayer: boolean = true): number {
+    protected solveMinMax(value: number, depth: number, alpha: number, beta: number,
+                          maximizingPlayer: boolean = true): number {
         let bestValue: number = maximizingPlayer ? alpha : beta;
-        let bestFunction = maximizingPlayer ? this.isFirstMax : this.isFirstMin;
+        const bestFunction = maximizingPlayer ? this.isFirstMax : this.isFirstMin;
 
-        let freePositions = this.orderPositions( {
-            positions: this.nextCellsArray.filter(position => this.board.isFreeByPosition(position)),
-            size: this.board.size
+        const freePositions = this.orderPositions({
+            positions: this.nextCellsArray.filter((position) => this.board.isFreeByPosition(position)),
+            size: this.board.size,
         });
-        for (let position of freePositions) {
-
-            let currentPoints = (maximizingPlayer ? 1 : -1) * this.weightOfMove({
+        for (const position of freePositions) {
+            const currentPoints = (maximizingPlayer ? 1 : -1) * this.weightOfMove({
                 board: this.board,
-                position: position,
-                nextPlayer: this.nextPlayer
+                nextPlayer: this.nextPlayer,
+                position,
             });
 
             this.board.setCellByPosition(position, 2);
-            let accumulatedPoints = depth > 0 && freePositions.length > 1 ?
+            const accumulatedPoints = depth > 0 && freePositions.length > 1 ?
                 this.solveMinMax(value + currentPoints, depth - 1,
                     maximizingPlayer ? bestValue : alpha,
                     maximizingPlayer ? beta : bestValue, !maximizingPlayer) :
@@ -39,20 +41,21 @@ export class MinmaxAbPlayer extends AbstractMinmaxPlayer {
 
             if (bestFunction(accumulatedPoints, bestValue)) {
                 bestValue = accumulatedPoints;
-                if (maximizingPlayer && depth == this.depth - 1) {
+                if (maximizingPlayer && depth === this.depth - 1) {
                     this.selectedPosition = position;
                 }
             }
 
             this.board.setCellByPosition(position, -1);
             if (maximizingPlayer) {
-                if (bestValue >= beta) return beta;
+                if (bestValue >= beta) {
+                    return beta;
+                }
             } else {
-                if (bestValue <= alpha) return alpha;
+                if (bestValue <= alpha) {
+                    return alpha;
+                }
             }
-        }
-        if (depth == this.depth - 1) {
-            // console.log(this.selectedPosition, bestValue);
         }
         return bestValue;
     }

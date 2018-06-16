@@ -1,11 +1,11 @@
-export function safeSelector(object: object, path : string, defaultValue = undefined): any {
-    let pathList = path.split('.');
+export function safeSelector(object: object, path: string, defaultValue: any = null): any {
+    const pathList = path.split(".");
     let result = object;
     if (result == null) {
         return defaultValue;
     }
-    for(let item of pathList) {
-        result = result[item.replace('[]','')];
+    for (const item of pathList) {
+        result = result[item.replace("[]", "")];
         if (result == null) {
             return defaultValue;
         }

@@ -1,23 +1,25 @@
+import {Board, IAiWeightState} from "../../model/board";
+import {GameState} from "../../model/game-state";
+import {IBoardPosition} from "../../model/model";
 import {AiPlayer} from "./ai-player";
-import {AiWeightState, Board, BoardPosition, GameState} from "../../model/model";
 
 export abstract class AbstractMinmaxPlayer extends AiPlayer {
-    nextCellsArray: BoardPosition[];
-    board: Board;
-    nextPlayer: number;
-    selectedPosition: BoardPosition;
-    depth: number;
-    weightOfMove: (state: AiWeightState) => number;
+    protected nextCellsArray: IBoardPosition[];
+    protected board: Board;
+    protected nextPlayer: number;
+    protected selectedPosition: IBoardPosition;
+    protected depth: number;
+    protected weightOfMove: (state: IAiWeightState) => number;
 
-    protected constructor(weightOfMove: (state: AiWeightState) => number, depth: number) {
+    protected constructor(weightOfMove: (state: IAiWeightState) => number, depth: number) {
         super();
         this.depth = depth;
         this.weightOfMove = weightOfMove;
     }
 
-    protected makeAiMove(gameState: GameState): Promise<BoardPosition> {
-        console.log('MinmaxPlayer', gameState);
-        return new Promise<BoardPosition>(resolve => {
+    protected makeAiMove(gameState: GameState): Promise<IBoardPosition> {
+        console.log("MinmaxPlayer", gameState);
+        return new Promise<IBoardPosition>((resolve) => {
             this.board = gameState.board;
             this.nextPlayer = gameState.nextPlayer;
             this.nextCellsArray = this.createNextCellsArray(gameState.size);
@@ -26,18 +28,18 @@ export abstract class AbstractMinmaxPlayer extends AiPlayer {
         });
     }
 
-    abstract invokeMove(): void;
+    protected abstract invokeMove(): void;
 
-    createNextCellsArray(size: number): BoardPosition[] {
+    protected createNextCellsArray(size: number): IBoardPosition[] {
         return Array.apply(null, {length: size * size})
             .map(Number.call, Number)
-            .map(i => ({
+            .map((i) => ({
+                column: Math.floor(i % size),
                 row: Math.floor(i / size),
-                column: Math.floor(i % size)
             }))
-            .filter(position => this.board.isFreeByPosition(position));
+            .filter((position) => this.board.isFreeByPosition(position));
     }
 
-    isFirstMin = (a, b) => a < b;
-    isFirstMax = (a, b) => a > b;
+    protected isFirstMin = (a, b) => a < b;
+    protected isFirstMax = (a, b) => a > b;
 }

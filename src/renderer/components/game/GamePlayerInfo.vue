@@ -16,7 +16,7 @@
     import bContainer from 'bootstrap-vue/es/components/layout/container';
     import bCol from 'bootstrap-vue/es/components/layout/col';
     import bRow from 'bootstrap-vue/es/components/layout/row';
-    import {Player} from "../../../model/model";
+    import {IPlayer} from "../../../model/model";
     import {AbstractComponent} from "../abstract-component";
 
     @Component({
@@ -33,7 +33,7 @@
         playerIndex: number;
 
         @Prop()
-        player: Player;
+        player: IPlayer;
 
         @Prop()
         playerMove: boolean;

@@ -87,7 +87,7 @@
     import bFormInput from 'bootstrap-vue/es/components/form-input/form-input';
     import bFormSelect from 'bootstrap-vue/es/components/form-select/form-select';
     import bRow from 'bootstrap-vue/es/components/layout/row';
-    import {GameConfig, PlayerType} from "../../../model/model";
+    import {IGameConfig, PlayerType} from "../../../model/model";
     import {randomArrayElement} from "../../../common/utils";
     import {ipcRenderer} from 'electron';
     import {IpcMessage, IpcMessageType} from "../../../model/messages";
@@ -146,7 +146,7 @@
 
         onSubmit() {
             this.middleColumnWidth = 0;
-            let gameConfig: GameConfig = {
+            let gameConfig: IGameConfig = {
                 size: +this.form.size,
                 players: [
                     {

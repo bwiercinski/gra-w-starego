@@ -1,4 +1,4 @@
-import {BrowserWindow, app} from "electron";
+import {app, BrowserWindow} from "electron";
 import {FrontendMessagesFacade} from "./engine/frontend-messages-facade";
 
 new FrontendMessagesFacade().start();
@@ -14,11 +14,11 @@ function createWindow() {
      * Initial window options
      */
     mainWindow = new BrowserWindow({
-        width: 1300,
         height: 800,
         minHeight: 500,
         minWidth: 600,
-        useContentSize: true
+        useContentSize: true,
+        width: 1300,
     });
 
     mainWindow.setMenu(null);
@@ -42,23 +42,3 @@ app.on("activate", () => {
         createWindow();
     }
 });
-
-/**
- * Auto Updater
- *
- * Uncomment the following code below and install `electron-updater` to
- * support auto updating. Code Signing with a valid certificate is required.
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
- */
-
-/*
-import { autoUpdater } from 'electron-updater'
-
-autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
-})
-
-app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-})
- */

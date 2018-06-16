@@ -16,8 +16,8 @@
 <script lang="ts">
     import Component from 'vue-class-component';
     import {Prop, Watch} from 'vue-property-decorator';
-    import {GameState} from "../../../model/model";
     import {AbstractComponent} from "../abstract-component";
+    import {GameState} from "../../../model/game-state";
     const pawnOld = require('../../assets/pawn-old.png');
     const pawnYoung = require('../../assets/pawn-young.png');
 

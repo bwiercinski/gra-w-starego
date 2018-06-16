@@ -1,16 +1,18 @@
-import App from "./App.vue";
 import Vue from "vue";
+import electron from "vue-electron";
+import App from "./App.vue";
 import VueRouter from "./router";
 
-if (!process.env.IS_WEB) Vue.use(require("vue-electron"));
+if (!process.env.IS_WEB) { Vue.use(electron); }
 Vue.config.productionTip = false;
 
-/* eslint-disable no-new */
+/* tslint:disable:no-unused-expression */
 new Vue({
-    el: '#app',
     components: {App},
+    el: "#app",
     router: VueRouter,
     render(createElement: any) {
         return createElement(App);
-    }
+    },
 });
+/* tslint:enable:no-unused-expression */

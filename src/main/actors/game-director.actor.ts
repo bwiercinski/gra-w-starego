@@ -1,23 +1,22 @@
-import {BoardPosition, GameState} from "../../model/model";
+import {GameEndMessage} from "../../model/game-end-message";
+import {GameState} from "../../model/game-state";
+import {GameStateMessage} from "../../model/game-state-message";
+import {MakeMoveMessage} from "../../model/make-move-message";
+import {IBoardPosition} from "../../model/model";
+import {MoveMadeMessage} from "../../model/move-made-message";
+import {StartGameMessage} from "../../model/start-game-message";
+import {StopGameMessage} from "../../model/stop-game-message";
+import {IMessagesFacade} from "../engine/i-messages-facade";
 import {AbstractGameActor} from "./abstract-game.actor";
-import {
-    GameEndMessage,
-    GameStateMessage,
-    MakeMoveMessage,
-    MoveMadeMessage,
-    StartGameMessage,
-    StopGameMessage
-} from "../../model/messages";
 import {ActorFactory} from "./actor-system";
-import {MessagesFacade} from "../engine/messages-facade";
 
 export class GameDirectorActor extends AbstractGameActor {
 
-    messagesFacade: MessagesFacade;
+    private messagesFacade: IMessagesFacade;
 
-    gameState: GameState;
+    private gameState: GameState;
 
-    constructor(messagesFacade: MessagesFacade) {
+    constructor(messagesFacade: IMessagesFacade) {
         super();
         this.messagesFacade = messagesFacade;
     }
@@ -28,18 +27,18 @@ export class GameDirectorActor extends AbstractGameActor {
             .match(StopGameMessage, this.messageDecorator(this.stopGameMessage))
             .match(GameStateMessage, this.messageDecorator(this.gameStateMessage))
             .match(MoveMadeMessage, this.messageDecorator(this.moveMadeMessage))
-            .build()
+            .build();
     }
 
-    startGameMessage(self: GameDirectorActor, startGameMessage: StartGameMessage): void {
+    public startGameMessage(self: GameDirectorActor, startGameMessage: StartGameMessage): void {
         self.gameState = new GameState(
             startGameMessage.gameConfig.size,
-            startGameMessage.gameConfig.players.map(player => ({
+            startGameMessage.gameConfig.players.map((player) => ({
+                actor: ActorFactory.createGameActor(player, self.messagesFacade),
                 name: player.name,
-                type: player.type,
                 playerPoints: 0,
-                actor: ActorFactory.createGameActor(player, self.messagesFacade)
-            }))
+                type: player.type,
+            })),
         );
         setTimeout(() => {
             self.nextMove(self);
@@ -47,19 +46,19 @@ export class GameDirectorActor extends AbstractGameActor {
 
     }
 
-    stopGameMessage(self: GameDirectorActor, stopGameMessage: StopGameMessage): void {
-        console.log('STOP_GAME Message', stopGameMessage);
+    public stopGameMessage(self: GameDirectorActor, stopGameMessage: StopGameMessage): void {
+        console.log("STOP_GAME IMessage", stopGameMessage);
         self.gameState = null;
     }
 
-    gameStateMessage(self: GameDirectorActor, gameStateMessage: GameStateMessage): void {
-        console.log('GAME_STATE Message', gameStateMessage);
+    public gameStateMessage(self: GameDirectorActor, gameStateMessage: GameStateMessage): void {
+        console.log("GAME_STATE IMessage", gameStateMessage);
         self.messagesFacade.gameStateResponse(self.gameState);
     }
 
-    moveMadeMessage(self: GameDirectorActor, moveMadeMessage: MoveMadeMessage): void {
-         console.log('MOVE_MADE Message', moveMadeMessage);
-        if (self.gameState && self.gameState.nextPlayer == moveMadeMessage.playerIndex &&
+    public moveMadeMessage(self: GameDirectorActor, moveMadeMessage: MoveMadeMessage): void {
+         console.log("MOVE_MADE IMessage", moveMadeMessage);
+         if (self.gameState && self.gameState.nextPlayer === moveMadeMessage.playerIndex &&
             self.gameState.board.isFreeByPosition(moveMadeMessage.position)) {
 
             self.makeMove(self, moveMadeMessage.position, self.gameState.nextPlayer);
@@ -73,19 +72,19 @@ export class GameDirectorActor extends AbstractGameActor {
         }
     }
 
-    nextMove(self: GameDirectorActor) {
+    public nextMove(self: GameDirectorActor) {
         if (self.gameState && self.gameState.board) {
             self.gameState.players[self.gameState.nextPlayer].actor
                 .tell(new MakeMoveMessage(self.gameState), self.getSelf());
         }
     }
 
-    gameEndMessage(self: GameDirectorActor) {
+    public gameEndMessage(self: GameDirectorActor) {
         self.messagesFacade.gameEndMessage(new GameEndMessage(self.gameState));
     }
 
-    makeMove(self: GameDirectorActor, position: BoardPosition, playerIndex: number) {
-        let gameState = self.gameState;
+    public makeMove(self: GameDirectorActor, position: IBoardPosition, playerIndex: number) {
+        const gameState = self.gameState;
         gameState.players[gameState.nextPlayer].playerPoints += gameState.board.givingPointsByPosition(position);
         gameState.board.setCellByPosition(position, playerIndex);
     }

@@ -1,20 +1,20 @@
-import {PlayerTurnMessage} from "../../model/messages";
-import {MessagesFacade} from "../engine/messages-facade";
 import {ActorRef} from "js-actor";
-import {GameState} from "../../model/model";
+import {GameState} from "../../model/game-state";
+import {PlayerTurnMessage} from "../../model/player-turn-message";
+import {IMessagesFacade} from "../engine/i-messages-facade";
 import {GamePlayer} from "./game-player";
 
 export class HumanGamePlayer extends GamePlayer {
 
-    messagesFacade: MessagesFacade;
+    protected messagesFacade: IMessagesFacade;
 
-    constructor(messagesFacade: MessagesFacade) {
+    constructor(messagesFacade: IMessagesFacade) {
         super();
         this.messagesFacade = messagesFacade;
     }
 
-    makeMove(gameState: GameState, sender: ActorRef, player: ActorRef): void {
-        console.log('HumanGamePlayer', gameState);
+    public makeMove(gameState: GameState, sender: ActorRef, player: ActorRef): void {
+        console.log("HumanGamePlayer", gameState);
         this.messagesFacade.playerTurnMessage(new PlayerTurnMessage(gameState.nextPlayer, player));
     }
 }

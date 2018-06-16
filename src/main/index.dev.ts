@@ -4,40 +4,26 @@
  *  modify this file, but it can be used to extend your development
  *  environment.
  */
-const {app} = require('electron');
+import {app} from "electron";
 /* eslint-disable */
 
 // Set environment for development
 process.env.NODE_ENV = "development";
 
 // Install `electron-debug` with `devtron`
-require("electron-debug")({showDevTools: true});
+import * as electronDebug from "electron-debug";
+electronDebug({showDevTools: true});
 
 // Install `vue-devtools`
 app.on("ready", () => {
-    // const options = {
-    //     categoryFilter: '*',
-    //     traceOptions: 'record-until-full,enable-sampling'
-    // };
-    //
-    // contentTracing.startRecording(options, () => {
-    //     console.log('Tracing started');
-    //
-    //     setTimeout(() => {
-    //         contentTracing.stopRecording('', (path) => {
-    //             console.log('Tracing data recorded to ' + path)
-    //         })
-    //     }, 5000);
-    // });
-    let installExtension = require("electron-devtools-installer");
+    const installExtension = require("electron-devtools-installer");
     installExtension
         .default(installExtension.VUEJS_DEVTOOLS)
-        .then(() => {
-        })
+        .then(() => null)
         .catch((err: Error) => {
             console.log("Unable to install `vue-devtools`: \n", err);
         });
 });
 
 // Require `main` process to boot app
-require("./index");
+import "./index";
