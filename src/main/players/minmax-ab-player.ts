@@ -26,25 +26,8 @@ export class MinmaxAbPlayer extends AbstractMinmaxPlayer {
             size: this.board.size,
         });
         for (const position of freePositions) {
-            const currentPoints = (maximizingPlayer ? 1 : -1) * this.weightOfMove({
-                board: this.board,
-                nextPlayer: this.nextPlayer,
-                position,
-            });
-
-            this.board.setCellByPosition(position, 2);
-            const accumulatedPoints = depth > 0 && freePositions.length > 1 ?
-                this.solveMinMax(value + currentPoints, depth - 1,
-                    maximizingPlayer ? bestValue : alpha,
-                    maximizingPlayer ? beta : bestValue, !maximizingPlayer) :
-                value + currentPoints;
-
-            if (bestFunction(accumulatedPoints, bestValue)) {
-                bestValue = accumulatedPoints;
-                if (maximizingPlayer && depth === this.depth - 1) {
-                    this.selectedPosition = position;
-                }
-            }
+            bestValue = this.solvePosition(position, value, bestValue, bestFunction,
+                maximizingPlayer, depth, alpha, beta, freePositions.length);
 
             this.board.setCellByPosition(position, -1);
             if (maximizingPlayer) {
@@ -55,6 +38,31 @@ export class MinmaxAbPlayer extends AbstractMinmaxPlayer {
                 if (bestValue <= alpha) {
                     return alpha;
                 }
+            }
+        }
+        return bestValue;
+    }
+
+    protected solvePosition(position: IBoardPosition, value: number, bestValue: number, bestFunction,
+                            maximizingPlayer: boolean, depth: number, alpha: number, beta: number,
+                            freePositions: number): number {
+        const currentPoints = (maximizingPlayer ? 1 : -1) * this.weightOfMove({
+            board: this.board,
+            nextPlayer: this.nextPlayer,
+            position,
+        });
+
+        this.board.setCellByPosition(position, 2);
+        const accumulatedPoints = depth > 0 && freePositions > 1 ?
+            this.solveMinMax(value + currentPoints, depth - 1,
+                maximizingPlayer ? bestValue : alpha,
+                maximizingPlayer ? beta : bestValue, !maximizingPlayer) :
+            value + currentPoints;
+
+        if (bestFunction(accumulatedPoints, bestValue)) {
+            bestValue = accumulatedPoints;
+            if (maximizingPlayer && depth === this.depth - 1) {
+                this.selectedPosition = position;
             }
         }
         return bestValue;

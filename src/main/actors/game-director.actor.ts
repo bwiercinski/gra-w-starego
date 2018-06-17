@@ -57,18 +57,19 @@ export class GameDirectorActor extends AbstractGameActor {
     }
 
     public moveMadeMessage(self: GameDirectorActor, moveMadeMessage: MoveMadeMessage): void {
-         console.log("MOVE_MADE IMessage", moveMadeMessage);
-         if (self.gameState && self.gameState.nextPlayer === moveMadeMessage.playerIndex &&
+        console.log("MOVE_MADE IMessage", moveMadeMessage);
+        if (self.gameState && self.gameState.nextPlayer === moveMadeMessage.playerIndex &&
             self.gameState.board.isFreeByPosition(moveMadeMessage.position)) {
 
             self.makeMove(self, moveMadeMessage.position, self.gameState.nextPlayer);
             self.gameState.nextPlayer = +!self.gameState.nextPlayer;
-            self.messagesFacade.gameStateResponse(self.gameState);
             if (!self.gameState.board.isFilled()) {
                 setTimeout(() => self.nextMove(self), 100);
             } else {
+                self.gameState.nextPlayer = -1;
                 self.gameEndMessage(self);
             }
+            self.messagesFacade.gameStateResponse(self.gameState);
         }
     }
 
